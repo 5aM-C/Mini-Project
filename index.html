@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusConnect | Student Hub</title>
+  <link rel="stylesheet" href="rubric_2.css" />
+</head>
+<body>
+
+  <!-- AUTH SCREEN -->
+  <div id="auth-view" class="auth-wrapper">
+    <div class="card auth-card">
+      <h1 class="brand-title">CampusConnect</h1>
+      <p class="brand-subtitle">Verified Campus Skill Exchange & Community</p>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" placeholder="e.g. Alex Sharma" required />
+        </div>
+        <div class="form-group">
+          <label for="campusEmail">Institutional Email</label>
+          <input type="email" id="campusEmail" placeholder="student@college.edu" required />
+        </div>
+        <div class="form-group">
+          <label for="department">Department</label>
+          <select id="department" required>
+            <option value="Computer Science">Computer Science & Eng</option>
+            <option value="Information Tech">Information Technology</option>
+            <option value="Electronics">Electronics & Telecom</option>
+            <option value="Mechanical">Mechanical Engineering</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Verify & Enter</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD SCREEN -->
+  <div id="dashboard-view">
+    <!-- Navbar -->
+    <header class="top-nav">
+      <div class="nav-brand">CampusConnect</div>
+      
+      <nav class="nav-tabs">
+        <button class="tab-btn active" data-tab="feed-tab">Feed</button>
+        <button class="tab-btn" data-tab="search-tab">Search</button>
+        <button class="tab-btn" data-tab="communities-tab">Communities</button>
+        <button class="tab-btn" data-tab="messages-tab">Messages</button>
+        <button class="tab-btn" data-tab="profile-tab">Profile</button>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggle" class="btn-icon" title="Toggle Theme">🌓</button>
+        <button id="logoutBtn" class="btn-text">Logout</button>
+      </div>
+    </header>
+
+    <main class="content-container">
+      
+      <!-- TAB 1: SOCIAL FEED (INSTAGRAM STYLE) -->
+      <section id="feed-tab" class="tab-pane active">
+        <div class="feed-layout">
+          <div class="feed-stream">
+            
+            <!-- Create Post Box -->
+            <div class="card post-creator">
+              <textarea id="postInput" placeholder="Share a project update, question, or skill request..."></textarea>
+              <div class="post-creator-footer">
+                <button id="submitPostBtn" class="btn btn-primary btn-sm">Post</button>
+              </div>
+            </div>
+
+            <!-- Posts List -->
+            <div id="postsList">
+              <article class="card post-card">
+                <div class="post-header">
+                  <div class="avatar">RM</div>
+                  <div>
+                    <div class="post-author">Rohan Mehta <span class="badge">Verified</span></div>
+                    <div class="post-time">2 hours ago • Computer Science</div>
+                  </div>
+                </div>
+                <div class="post-body">
+                  Just finished setting up our PyTorch training pipeline for our NLP mini-project! Looking for someone who can help with building a Flask backend API to serve the model. Drop a message or swap request!
+                </div>
+                <div class="post-actions">
+                  <button class="action-btn like-btn">❤️ <span>14</span></button>
+                  <button class="action-btn">💬 Comment</button>
+                  <button class="action-btn">🔄 Swap Skill</button>
+                </div>
+              </article>
+
+              <article class="card post-card">
+                <div class="post-header">
+                  <div class="avatar">PP</div>
+                  <div>
+                    <div class="post-author">Priya Patil <span class="badge">Verified</span></div>
+                    <div class="post-time">5 hours ago • Information Tech</div>
+                  </div>
+                </div>
+                <div class="post-body">
+                  Designed wireframes and interactive UI mockups for our smart campus navigation app. Would love feedback from fellow frontend developers on component structure!
+                </div>
+                <div class="post-actions">
+                  <button class="action-btn like-btn">❤️ <span>28</span></button>
+                  <button class="action-btn">💬 Comment</button>
+                  <button class="action-btn">🔄 Swap Skill</button>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: SEARCH & DISCOVERY -->
+      <section id="search-tab" class="tab-pane">
+        <div class="card search-control-card">
+          <div class="search-input-wrapper">
+            <input type="text" id="globalSearchInput" placeholder="Search for people or communities..." />
+          </div>
+          <div class="filter-toggle-group">
+            <label class="filter-radio">
+              <input type="radio" name="searchFilter" value="profiles" checked />
+              <span>Individual Profiles</span>
+            </label>
+            <label class="filter-radio">
+              <input type="radio" name="searchFilter" value="communities" />
+              <span>Communities</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Profiles Search Results -->
+        <div id="profileResults" class="results-grid">
+          <div class="card entity-card" data-name="rohan mehta" data-dept="computer science" data-skill="pytorch python">
+            <div class="entity-header">
+              <div class="avatar">RM</div>
+              <div>
+                <h4>Rohan Mehta</h4>
+                <p class="entity-sub">Computer Science • 3rd Year</p>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">Python</span>
+              <span class="tag">PyTorch</span>
+              <span class="tag">ML</span>
+            </div>
+            <button class="btn btn-outline btn-sm">View Profile</button>
+          </div>
+
+          <div class="card entity-card" data-name="priya patil" data-dept="information tech" data-skill="figma ui ux">
+            <div class="entity-header">
+              <div class="avatar">PP</div>
+              <div>
+                <h4>Priya Patil</h4>
+                <p class="entity-sub">Information Tech • 2nd Year</p>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">UI/UX</span>
+              <span class="tag">Figma</span>
+              <span class="tag">CSS</span>
+            </div>
+            <button class="btn btn-outline btn-sm">View Profile</button>
+          </div>
+
+          <div class="card entity-card" data-name="siddharth joshi" data-dept="computer science" data-skill="c++ dsa">
+            <div class="entity-header">
+              <div class="avatar">SJ</div>
+              <div>
+                <h4>Siddharth Joshi</h4>
+                <p class="entity-sub">Computer Science • 2nd Year</p>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">C++</span>
+              <span class="tag">DSA</span>
+              <span class="tag">LeetCode</span>
+            </div>
+            <button class="btn btn-outline btn-sm">View Profile</button>
+          </div>
+        </div>
+
+        <!-- Communities Search Results -->
+        <div id="communityResults" class="results-grid" style="display: none;">
+          <div class="card entity-card" data-name="ai & ml study circle" data-desc="neural networks machine learning">
+            <div class="entity-header">
+              <div class="avatar">#AI</div>
+              <div>
+                <h4>AI & ML Study Circle</h4>
+                <p class="entity-sub">128 Members</p>
+              </div>
+            </div>
+            <p class="entity-desc">Weekly discussions, paper breakdowns, and Kaggle team matchmaking.</p>
+            <button class="btn btn-outline btn-sm">Join Community</button>
+          </div>
+
+          <div class="card entity-card" data-name="frontend developers hub" data-desc="react web ui css javascript">
+            <div class="entity-header">
+              <div class="avatar">#FE</div>
+              <div>
+                <h4>Frontend Developers Hub</h4>
+                <p class="entity-sub">94 Members</p>
+              </div>
+            </div>
+            <p class="entity-desc">Showcase UI components, debug CSS, and build hackathon UIs together.</p>
+            <button class="btn btn-outline btn-sm">Join Community</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: MY COMMUNITIES -->
+      <section id="communities-tab" class="tab-pane">
+        <div class="results-grid">
+          <div class="card entity-card">
+            <div class="entity-header">
+              <div class="avatar">#WD</div>
+              <div>
+                <h4>Web-Dev-Guild</h4>
+                <p class="entity-sub">Active Discussions: 14</p>
+              </div>
+            </div>
+            <p class="entity-desc">Campus group dedicated to full-stack projects, architecture design, and REST APIs.</p>
+            <button class="btn btn-primary btn-sm">Open Hub</button>
+          </div>
+
+          <div class="card entity-card">
+            <div class="entity-header">
+              <div class="avatar">#HS</div>
+              <div>
+                <h4>Hackathon-Squads</h4>
+                <p class="entity-sub">Active Discussions: 23</p>
+              </div>
+            </div>
+            <p class="entity-desc">Form multi-disciplinary teams for upcoming college and regional hackathons.</p>
+            <button class="btn btn-primary btn-sm">Open Hub</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: MESSAGING -->
+      <section id="messages-tab" class="tab-pane">
+        <div class="card messaging-layout">
+          <div class="chat-list">
+            <div class="chat-item active">
+              <div class="avatar sm">RM</div>
+              <div>
+                <div class="chat-name">Rohan Mehta</div>
+                <div class="chat-preview">Hey, want to collaborate on...</div>
+              </div>
+            </div>
+            <div class="chat-item">
+              <div class="avatar sm">PP</div>
+              <div>
+                <div class="chat-name">Priya Patil</div>
+                <div class="chat-preview">I checked your UI draft!</div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-window">
+            <div class="chat-header">Rohan Mehta</div>
+            <div class="chat-messages">
+              <div class="msg received">Hey, are you free to discuss the Flask API integration for the ML project?</div>
+              <div class="msg sent">Yes! I have standard schema templates ready. Let's sync today.</div>
+            </div>
+            <div class="chat-input-row">
+              <input type="text" placeholder="Type a message..." />
+              <button class="btn btn-primary btn-sm">Send</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: PROFILE -->
+      <section id="profile-tab" class="tab-pane">
+        <div class="card profile-card">
+          <div class="profile-header-main">
+            <div class="avatar lg" id="profileAvatar">ST</div>
+            <div>
+              <h2 id="profileNameDisplay">Student User</h2>
+              <p class="text-muted" id="profileDeptDisplay">Department</p>
+              <span class="badge">● Verified Institutional Account</span>
+            </div>
+          </div>
+
+          <hr class="divider" />
+
+          <div class="profile-section">
+            <h4>Skills Offered</h4>
+            <div class="tag-row">
+              <span class="tag">HTML & CSS</span>
+              <span class="tag">JavaScript</span>
+              <span class="tag">Python Logic</span>
+            </div>
+          </div>
+
+          <div class="profile-section">
+            <h4>Skills Desired</h4>
+            <div class="tag-row">
+              <span class="tag">Machine Learning</span>
+              <span class="tag">Distributed Systems</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="rubric_2.js"></script>
+</body>
+</html>
