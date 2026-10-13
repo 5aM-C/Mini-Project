@@ -1,314 +1,1442 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CampusConnect | Student Hub</title>
-  <link rel="stylesheet" href="rubric_2.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CampusConnect | Student Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --indigo:#5b4fe0; --indigo-600:#4a3fd0; --indigo-300:#a79ff5;
+  --lav-50:#f6f4ff; --lav-100:#ece8ff; --lav-200:#ddd7ff; --lav-300:#c9c0ff;
+  --navy:#0f1b3d; --navy-2:#17285a; --navy-3:#22377a;
+  --mint:#4fe3c1; --mint-600:#1fb994; --mint-100:#d8f8ef; --mint-50:#eefcf8;
+  --coral:#ff7a90; --amber:#ffb84d;
+
+  --bg:linear-gradient(160deg,#e9e5ff 0%,#dcd6ff 45%,#e8e4ff 100%);
+  --blob1:rgba(91,79,224,.28); --blob2:rgba(79,227,193,.22);
+  --card:rgba(255,255,255,.82); --card-solid:#fff; --card-border:rgba(91,79,224,.14);
+  --text:#14193a; --muted:#5d6488; --faint:#8a90b0;
+  --input:#f3f1ff; --line:rgba(20,25,58,.09);
+  --shadow:0 1px 2px rgba(48,38,140,.05), 0 10px 28px -14px rgba(48,38,140,.2);
+  --shadow-lg:0 24px 60px -20px rgba(33,24,110,.45);
+  --navy-card:linear-gradient(145deg,#0f1b3d 0%,#1a2c66 100%);
+  --mint-card:linear-gradient(145deg,#d8f8ef 0%,#c8f3ff 100%);
+  --nav-bg:rgba(255,255,255,.72);
+  --bubble-in:#fff; --bubble-out:linear-gradient(135deg,#5b4fe0,#7a6cf5);
+  --radius:20px;
+}
+[data-theme="dark"]{
+  --bg:linear-gradient(160deg,#0a0f2a 0%,#141043 50%,#0c1235 100%);
+  --blob1:rgba(91,79,224,.35); --blob2:rgba(79,227,193,.14);
+  --card:rgba(23,34,82,.72); --card-solid:#16224f; --card-border:rgba(167,159,245,.16);
+  --text:#eef0ff; --muted:#aab1d8; --faint:#7f87b3;
+  --input:rgba(255,255,255,.07); --line:rgba(255,255,255,.09);
+  --shadow:0 12px 34px -14px rgba(0,0,0,.65);
+  --navy-card:linear-gradient(145deg,#1b2d6e 0%,#26397f 100%);
+  --mint-card:linear-gradient(145deg,rgba(79,227,193,.2),rgba(91,79,224,.22));
+  --nav-bg:rgba(15,22,60,.72);
+  --bubble-in:#1d2c66; --lav-100:#1f2a63; --lav-200:#2a3678; --mint-100:rgba(79,227,193,.16); --mint-50:rgba(79,227,193,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);background:var(--bg);background-attachment:fixed;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;z-index:-1;border-radius:50%;filter:blur(80px);pointer-events:none}
+body::before{width:520px;height:520px;background:var(--blob1);top:-140px;left:-120px}
+body::after{width:460px;height:460px;background:var(--blob2);bottom:-120px;right:-100px}
+h1,h2,h3,h4{font-family:'Sora','Plus Jakarta Sans',sans-serif;letter-spacing:-.01em}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit;color:var(--text)}
+:focus-visible{outline:3px solid var(--mint);outline-offset:2px;border-radius:10px}
+svg.i{width:1.1em;height:1.1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hidden{display:none!important}
+
+/* ============ CARDS / BUTTONS ============ */
+.card{background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--card-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.card.navy{background:var(--navy-card);color:#eef0ff;border-color:rgba(255,255,255,.08)}
+.card.navy .muted{color:#aeb7e6}
+.card.mint{background:var(--mint-card);border-color:rgba(31,185,148,.25)}
+.muted{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:.92rem;padding:11px 20px;border-radius:14px;transition:transform .15s,box-shadow .2s,background .2s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--indigo),#7a6cf5);color:#fff;box-shadow:0 8px 20px -8px rgba(91,79,224,.7)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px -8px rgba(91,79,224,.8)}
+.btn-mint{background:var(--mint);color:var(--navy);box-shadow:0 8px 20px -10px rgba(31,185,148,.9)}
+.btn-mint:hover{transform:translateY(-2px);background:#6af0d1}
+.btn-outline{border:1.5px solid var(--indigo-300);color:var(--indigo);background:transparent}
+[data-theme="dark"] .btn-outline{color:var(--mint);border-color:rgba(79,227,193,.45)}
+.btn-outline:hover{background:var(--lav-100)}
+.btn-ghost{background:var(--input);color:var(--muted)}
+.btn-ghost:hover{background:var(--lav-200)}
+.btn-sm{padding:8px 14px;font-size:.84rem;border-radius:12px}
+.btn-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--input);color:var(--text);position:relative;transition:background .2s,transform .15s;font-size:1.1rem}
+.btn-icon:hover{background:var(--lav-200);transform:translateY(-1px)}
+.dot-badge{position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;border-radius:99px;background:var(--coral);color:#fff;font-size:.68rem;font-weight:800;display:grid;place-items:center;border:2px solid var(--card-solid);padding:0 4px}
+
+/* ============ AVATAR / TAGS / BADGES ============ */
+.avatar{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-weight:800;font-size:.9rem;color:#fff;flex:none;position:relative;font-family:'Sora',sans-serif}
+.avatar.sm{width:44px;height:44px;border-radius:14px}
+.avatar.xs{width:30px;height:30px;border-radius:10px;font-size:.68rem}
+.avatar.lg{width:104px;height:104px;border-radius:30px;font-size:2rem;border:4px solid var(--card-solid)}
+.av-1{background:linear-gradient(135deg,#5b4fe0,#8b7dff)} .av-2{background:linear-gradient(135deg,#1fb994,#4fe3c1);color:var(--navy)}
+.av-3{background:linear-gradient(135deg,#17285a,#3a55b8)} .av-4{background:linear-gradient(135deg,#ff7a90,#ffa86b)} .av-5{background:linear-gradient(135deg,#7a6cf5,#4fe3c1)}
+.presence{position:absolute;right:-3px;bottom:-3px;width:14px;height:14px;border-radius:50%;background:#9aa1c4;border:3px solid var(--card-solid)}
+.presence.on{background:#2ee59d;box-shadow:0 0 0 0 rgba(46,229,157,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 7px rgba(46,229,157,0)}100%{box-shadow:0 0 0 0 rgba(46,229,157,0)}}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:.78rem;font-weight:600;padding:5px 12px;border-radius:99px;background:var(--lav-100);color:var(--indigo-600)}
+[data-theme="dark"] .tag{color:var(--indigo-300)}
+.tag.mint{background:var(--mint-100);color:#0b7a5f} [data-theme="dark"] .tag.mint{color:var(--mint)}
+.tag.want{background:transparent;border:1.5px dashed var(--indigo-300);color:var(--muted)}
+.tag button{margin-left:6px;opacity:.6;font-size:.9rem}
+.verified{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:3px 9px;border-radius:99px;background:var(--mint-100);color:#0b7a5f;vertical-align:middle}
+[data-theme="dark"] .verified{color:var(--mint)}
+/* skill badges */
+.skill-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 7px;border-radius:99px;font-size:.78rem;font-weight:700;background:var(--card-solid);border:1px solid var(--line);box-shadow:0 2px 6px rgba(20,25,58,.05)}
+.skill-badge .medal{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.62rem;color:#fff;font-weight:800}
+.lvl-Gold .medal{background:linear-gradient(135deg,#ffcb4d,#ff9d2e)}
+.lvl-Silver .medal{background:linear-gradient(135deg,#aeb6d6,#7d86ad)}
+.lvl-Bronze .medal{background:linear-gradient(135deg,#e5a070,#b9693a)}
+.skill-badge small{font-weight:600;color:var(--faint);font-size:.68rem}
+.stars{color:var(--amber);letter-spacing:1px;font-size:.85rem;white-space:nowrap}
+.match-pill{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:800;padding:4px 10px;border-radius:99px;background:linear-gradient(135deg,var(--mint),#9bf3de);color:var(--navy)}
+
+/* ============ LANDING (front page) ============ */
+.logo-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--indigo),var(--mint));display:grid;place-items:center;color:#fff;box-shadow:0 8px 20px -6px rgba(91,79,224,.6);flex:none}
+.landing{--text:#eef0ff;--muted:#aab1d8;--faint:#7f87b3;--card:rgba(255,255,255,.045);--card-solid:#141a45;--card-border:rgba(167,159,245,.18);--input:rgba(255,255,255,.07);--line:rgba(255,255,255,.1);--shadow:0 18px 50px -20px rgba(0,0,0,.7);--shadow-lg:0 30px 70px -25px rgba(0,0,0,.8);--lav-100:rgba(167,159,245,.16);--lav-200:rgba(167,159,245,.26);--mint-100:rgba(79,227,193,.16);
+  color:var(--text);min-height:100vh;position:relative;overflow:hidden;
+  background:radial-gradient(900px 520px at 50% -8%,rgba(91,79,224,.55),transparent 70%),radial-gradient(700px 420px at 90% 30%,rgba(139,92,246,.18),transparent 70%),radial-gradient(600px 400px at 0% 60%,rgba(79,227,193,.10),transparent 70%),#080a1f}
+.landing .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.l-nav{position:sticky;top:0;z-index:40;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(8,10,31,.62);border-bottom:1px solid var(--line)}
+.l-nav .wrap{display:flex;align-items:center;gap:28px;height:72px}
+.l-brand{display:flex;align-items:center;gap:12px;font-family:'Sora',sans-serif;font-weight:800;font-size:1.15rem;line-height:1.1;margin-right:auto}
+.l-brand small{display:block;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;font-size:.7rem;color:var(--faint);margin-top:2px}
+.l-brand b{color:var(--indigo-300)}
+.l-links{display:flex;gap:6px}
+.l-links a{padding:9px 14px;border-radius:12px;font-weight:600;font-size:.9rem;color:var(--muted);text-decoration:none;transition:all .2s}
+.l-links a:hover{color:#fff;background:rgba(255,255,255,.07)}
+.hero{text-align:center;padding:84px 0 70px}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:8px 16px;border-radius:99px;border:1px solid var(--card-border);background:rgba(91,79,224,.14);font-size:.8rem;font-weight:700;color:#d9d4ff}
+.pill i{width:8px;height:8px;border-radius:50%;background:#2ee59d;box-shadow:0 0 0 0 rgba(46,229,157,.6);animation:pulse 2s infinite}
+.hero h1{font-size:clamp(2.5rem,6.6vw,5rem);line-height:1.04;letter-spacing:-.03em;margin:26px auto 22px;max-width:960px;font-weight:800}
+.grad{background:linear-gradient(95deg,#8b7dff 0%,#c4a5ff 55%,#7ff0d8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:1.14rem;color:var(--muted);max-width:680px;margin:0 auto 34px}
+.hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-lg{padding:16px 28px;font-size:1rem;border-radius:16px}
+.btn-dark{background:rgba(255,255,255,.06);border:1px solid var(--card-border);color:#fff}
+.btn-dark:hover{background:rgba(255,255,255,.12)}
+.hero-stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:54px}
+.hero-stat{padding:16px 26px;border-radius:18px;background:var(--card);border:1px solid var(--card-border);min-width:170px}
+.hero-stat b{display:block;font-family:'Sora',sans-serif;font-size:1.7rem;color:#fff}
+.hero-stat b span{color:var(--mint)}
+.hero-stat small{color:var(--muted);font-size:.82rem}
+.scroll-hint{margin-top:44px;color:var(--faint);font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px}
+.scroll-hint svg{animation:bounceY 1.8s infinite}
+@keyframes bounceY{50%{transform:translateY(6px)}}
+.l-sec{padding:84px 0;border-top:1px solid var(--line)}
+.l-sec .head{text-align:center;max-width:680px;margin:0 auto 48px}
+.eyebrow{display:inline-block;font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);margin-bottom:12px}
+.l-sec h2{font-size:clamp(1.8rem,3.8vw,2.7rem);line-height:1.12;letter-spacing:-.02em;margin-bottom:14px}
+.l-sec .head p{color:var(--muted);font-size:1.04rem}
+/* about: problem -> solution rows */
+.ps-list{display:flex;flex-direction:column;gap:14px;max-width:820px;margin:0 auto}
+.ps{display:grid;grid-template-columns:1fr 36px 1fr;gap:14px;align-items:center}
+.ps .box{padding:18px 20px;border-radius:18px;font-size:.94rem;border:1px solid var(--card-border);background:var(--card)}
+.ps .box small{display:block;font-weight:800;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;color:var(--faint)}
+.ps .box.good{background:linear-gradient(145deg,rgba(79,227,193,.14),rgba(91,79,224,.14));border-color:rgba(79,227,193,.3)}
+.ps .box.good small{color:var(--mint)}
+.ps .arrow{color:var(--mint);display:grid;place-items:center}
+/* how it works: vertical steps */
+.steps{max-width:720px;margin:0 auto;position:relative;display:flex;flex-direction:column;gap:22px}
+.steps::before{content:"";position:absolute;left:27px;top:20px;bottom:20px;width:2px;background:linear-gradient(var(--indigo),var(--mint));opacity:.5}
+.step{display:flex;gap:22px;align-items:flex-start;position:relative}
+.step .num{width:56px;height:56px;border-radius:18px;flex:none;display:grid;place-items:center;font-family:'Sora',sans-serif;font-weight:800;font-size:1.2rem;background:linear-gradient(135deg,var(--indigo),#7a6cf5);color:#fff;box-shadow:0 10px 24px -8px rgba(91,79,224,.9);z-index:1}
+.step:nth-child(even) .num{background:linear-gradient(135deg,var(--mint-600),var(--mint));color:var(--navy)}
+.step .txt{flex:1;padding:18px 22px;border-radius:20px;background:var(--card);border:1px solid var(--card-border)}
+.step h3{font-size:1.08rem;margin-bottom:4px}
+.step p{color:var(--muted);font-size:.93rem}
+/* features */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat{padding:26px;border-radius:22px;background:var(--card);border:1px solid var(--card-border);transition:transform .25s,border-color .25s}
+.feat:hover{transform:translateY(-5px);border-color:rgba(79,227,193,.45)}
+.feat .ico{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:var(--navy-2);color:var(--mint);margin-bottom:16px;font-size:1.25rem}
+.feat h3{font-size:1.04rem;margin-bottom:6px}
+.feat p{color:var(--muted);font-size:.9rem}
+.cat-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.cat-row span{padding:11px 20px;border-radius:99px;border:1px solid var(--card-border);background:var(--card);font-weight:700;font-size:.9rem}
+/* trust */
+.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:960px;margin:0 auto}
+.trust{padding:26px;border-radius:22px;text-align:center;background:linear-gradient(160deg,rgba(23,40,90,.9),rgba(15,27,61,.9));border:1px solid var(--card-border)}
+.trust .em{font-size:1.9rem;display:block;margin-bottom:10px}
+.trust h3{font-size:1.02rem;margin-bottom:6px} .trust p{color:var(--muted);font-size:.88rem}
+/* join */
+.join-box{max-width:520px;margin:0 auto}
+.auth-card{width:100%;padding:34px;box-shadow:var(--shadow-lg);background:var(--card-solid);color:var(--text)}
+.auth-card .btn-primary{width:100%;padding:15px;margin-top:6px}
+.landing .form-group{margin:16px 0}
+.landing .form-group label{display:block;font-size:.8rem;font-weight:700;margin-bottom:6px;color:var(--muted)}
+.landing .field{width:100%;padding:13px 16px;border-radius:14px;border:1.5px solid transparent;background:var(--input);font-size:.95rem;color:#fff;transition:border .2s,box-shadow .2s}
+.landing .field option{color:#14193a}
+.landing .field::placeholder{color:var(--faint)}
+.landing .field:focus{outline:none;border-color:var(--indigo-300);box-shadow:0 0 0 4px rgba(91,79,224,.25)}
+.field-hint{font-size:.76rem;margin-top:6px;color:var(--faint)} .field-hint.err{color:var(--coral);font-weight:600}
+.l-foot{padding:34px 0;border-top:1px solid var(--line);text-align:center;color:var(--faint);font-size:.84rem}
+.feat .ico,.logo-mark{display:grid!important;place-items:center}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media (max-width:860px){
+  .l-links{display:none} .hero{padding:52px 0 48px} .l-sec{padding:60px 0}
+  .feat-grid,.trust-grid{grid-template-columns:1fr}
+  .ps{grid-template-columns:1fr;gap:6px} .ps .arrow{transform:rotate(90deg)}
+  .step .txt{padding:14px 16px}
+  .l-brand small{display:none}
+}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}}
+
+/* ============ NAVBAR ============ */
+.top-nav{position:sticky;top:12px;z-index:50;margin:12px auto 0;max-width:1240px;width:calc(100% - 32px);display:flex;align-items:center;gap:20px;padding:10px 12px 10px 18px;border-radius:22px;background:var(--nav-bg);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border:1px solid var(--card-border);box-shadow:var(--shadow)}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:'Sora',sans-serif;font-weight:800;font-size:1.08rem;margin-right:auto}
+.nav-brand .logo-mark{width:36px;height:36px;border-radius:12px}
+.nav-tabs{display:flex;gap:2px;position:relative;padding:4px;background:var(--input);border-radius:16px}
+.nav-pill{position:absolute;top:4px;bottom:4px;left:0;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--navy-3));box-shadow:0 6px 16px -6px rgba(15,27,61,.7);transition:transform .35s cubic-bezier(.4,1.3,.5,1),width .35s cubic-bezier(.4,1.3,.5,1);z-index:0}
+.tab-btn{position:relative;z-index:1;display:flex;align-items:center;gap:7px;padding:9px 16px;font-weight:700;font-size:.88rem;color:var(--muted);border-radius:12px;transition:color .25s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:#fff}
+.tab-btn .cnt{background:var(--mint);color:var(--navy);font-size:.66rem;font-weight:800;border-radius:99px;padding:1px 6px}
+.nav-actions{display:flex;align-items:center;gap:10px;margin-left:auto;position:relative}
+.nav-user{display:flex;align-items:center;gap:10px;padding:4px 12px 4px 4px;border-radius:16px;background:var(--input);font-weight:700;font-size:.85rem}
+.nav-user .avatar{width:34px;height:34px;border-radius:12px;font-size:.75rem}
+.menu-pop{position:absolute;top:calc(100% + 12px);right:0;width:340px;max-height:70vh;overflow:auto;z-index:70;animation:pop .22s cubic-bezier(.3,1.4,.5,1);background:var(--card-solid);border:1px solid var(--card-border);border-radius:20px;box-shadow:var(--shadow-lg);padding:16px}
+@keyframes pop{from{opacity:0;transform:translateY(-8px) scale(.96)}}
+.notif{display:flex;gap:12px;padding:12px;border-radius:14px;align-items:flex-start;font-size:.85rem}
+.notif+.notif{margin-top:4px}
+.notif:hover{background:var(--input)}
+.notif .actions{display:flex;gap:8px;margin-top:8px}
+
+/* ============ LAYOUT ============ */
+.content-container{max-width:1240px;margin:24px auto 90px;padding:0 16px}
+.tab-pane{display:none}
+.tab-pane.active{display:block;animation:rise .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+.page-title{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.page-title h2{font-size:1.7rem}
+.feed-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start;max-width:1040px;margin:0 auto}
+.side-col{display:flex;flex-direction:column;gap:18px;position:sticky;top:96px}
+.stack{display:flex;flex-direction:column;gap:18px}
+.section-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-h h4{font-size:.98rem}
+.link-btn{font-size:.8rem;font-weight:700;color:var(--indigo)} [data-theme="dark"] .link-btn{color:var(--mint)}
+
+/* mini profile */
+.mini-prof{text-align:center;padding:0;overflow:hidden}
+.mini-prof .cover{height:76px;background:linear-gradient(120deg,var(--indigo),#8f84ff 55%,var(--mint))}
+.mini-prof .body{padding:0 20px 20px;margin-top:-34px}
+.mini-prof .avatar{margin:0 auto 10px;width:68px;height:68px;border-radius:22px;font-size:1.3rem;border:4px solid #1a2c66}
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.mini-stats div{background:rgba(255,255,255,.08);border-radius:12px;padding:8px 4px}
+.mini-stats b{display:block;font-family:'Sora',sans-serif;font-size:1.05rem;color:var(--mint)}
+.mini-stats span{font-size:.68rem;color:#aeb7e6}
+.trend-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:.86rem;font-weight:600;border-bottom:1px dashed var(--line)}
+.trend-item:last-child{border:none}
+.trend-item small{color:var(--faint);font-weight:500}
+
+/* composer */
+.post-creator textarea{width:100%;min-height:78px;resize:none;border:none;background:var(--input);border-radius:16px;padding:14px 16px;font-size:.95rem}
+.post-creator textarea:focus{outline:2px solid var(--indigo-300)}
+.post-creator-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:10px;flex-wrap:wrap}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:7px 13px;border-radius:99px;font-size:.8rem;font-weight:700;background:var(--input);color:var(--muted);transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{background:var(--lav-200)}
+.chip.active{background:var(--navy);color:#fff;box-shadow:0 6px 14px -6px rgba(15,27,61,.7)}
+[data-theme="dark"] .chip.active{background:var(--mint);color:var(--navy)}
+.feed-filters{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.feed-filters .chip-row{overflow:auto}
+
+/* posts */
+.post-card{transition:transform .2s,box-shadow .2s;animation:rise .45s both}
+.post-card:hover{transform:translateY(-2px)}
+.post-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.post-author{font-weight:800;font-size:.98rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.post-time{font-size:.78rem;color:var(--faint)}
+.post-header .match-pill{margin-left:auto}
+.post-body{font-size:.96rem;margin-bottom:12px;color:var(--text)}
+.why{display:flex;gap:8px;align-items:center;font-size:.78rem;padding:8px 12px;border-radius:12px;background:var(--mint-50);color:#0b7a5f;margin-bottom:12px;font-weight:600;border:1px solid rgba(31,185,148,.2)}
+[data-theme="dark"] .why{color:var(--mint)}
+.post-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.post-actions{display:flex;gap:6px;padding-top:12px;border-top:1px solid var(--line);flex-wrap:wrap}
+.action-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:12px;font-weight:700;font-size:.84rem;color:var(--muted);transition:all .2s}
+.action-btn:hover{background:var(--input);color:var(--text)}
+.action-btn.liked{color:var(--coral)} .action-btn.liked svg{fill:var(--coral)}
+.action-btn.collab{margin-left:auto;background:var(--navy);color:#fff}
+.action-btn.collab:hover{background:var(--navy-3);color:#fff}
+.action-btn.sent{background:var(--mint-100);color:#0b7a5f}
+.comments{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.comment{display:flex;gap:10px;font-size:.86rem}
+.comment .bubble{background:var(--input);border-radius:4px 14px 14px 14px;padding:8px 12px}
+.comment-input{display:flex;gap:8px}
+.comment-input input{flex:1;padding:10px 14px;border-radius:12px;border:none;background:var(--input);font-size:.86rem}
+
+/* suggested matches */
+.match-row{display:flex;align-items:center;gap:12px;padding:10px 0}
+.match-row+.match-row{border-top:1px dashed rgba(31,185,148,.3)}
+.match-row .info{flex:1;min-width:0}
+.match-row b{display:block;font-size:.9rem}
+.match-row small{color:var(--muted);font-size:.76rem}
+.ring{--p:80;width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--mint-600) calc(var(--p)*1%),rgba(31,185,148,.18) 0);display:grid;place-items:center;font-size:.7rem;font-weight:800;flex:none;position:relative}
+.ring::before{content:"";position:absolute;inset:5px;background:var(--card-solid);border-radius:50%}
+.ring span{position:relative}
+
+/* ============ EVENTS ============ */
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:20px}
+.event-card{padding:0;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s}
+.event-card:hover{transform:translateY(-4px)}
+.event-top{display:flex;gap:16px;padding:20px;background:var(--navy-card);color:#fff;position:relative}
+.event-top::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(79,227,193,.35),transparent 70%)}
+.date-block{width:62px;height:70px;border-radius:16px;background:var(--mint);color:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;font-family:'Sora'}
+.date-block b{font-size:1.5rem;line-height:1} .date-block span{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.event-top h4{font-size:1.05rem;margin-bottom:6px}
+.event-top{padding-bottom:44px}
+.event-meta{display:flex;flex-direction:column;gap:3px;font-size:.8rem;color:#b9c2f0}
+.event-meta span{display:flex;align-items:center;gap:6px}
+.event-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:14px;flex:1}
+.event-body p{font-size:.88rem;color:var(--muted)}
+.attendees{display:flex;align-items:center;font-size:.8rem;color:var(--muted);font-weight:600}
+.attendees .avatar{margin-left:-8px;border:2px solid var(--card-solid)} .attendees .avatar:first-child{margin-left:0}
+.attendees span{margin-left:10px}
+.rsvp-row{display:flex;gap:8px;margin-top:auto}
+.rsvp-btn{flex:1;padding:10px 6px;border-radius:12px;font-weight:700;font-size:.8rem;background:var(--input);color:var(--muted);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.rsvp-btn:hover{background:var(--lav-200)}
+.rsvp-btn.on-going{background:var(--mint);color:var(--navy);box-shadow:0 6px 14px -6px rgba(31,185,148,.9)}
+.rsvp-btn.on-interested{background:var(--indigo);color:#fff}
+.rsvp-btn.on-declined{background:#ffe3e8;color:#c0314c}
+.rsvp-status{position:absolute;bottom:14px;right:14px;z-index:2;font-size:.7rem;font-weight:800;padding:5px 11px;border-radius:99px;background:rgba(255,255,255,.14);color:#fff;backdrop-filter:blur(6px)}
+.rsvp-status.going{background:var(--mint);color:var(--navy)} .rsvp-status.interested{background:var(--indigo)} .rsvp-status.declined{background:#ffe3e8;color:#c0314c}
+.ev-mini{display:flex;gap:12px;align-items:center;padding:10px 0}
+.ev-mini+.ev-mini{border-top:1px dashed var(--line)}
+.ev-mini .date-block{width:46px;height:50px;border-radius:12px} .ev-mini .date-block b{font-size:1.05rem}
+.ev-mini .date-block span{font-size:.58rem}
+.ev-mini b{font-size:.86rem;display:block;line-height:1.3}
+.ev-mini small{color:var(--muted);font-size:.74rem}
+
+/* ============ SEARCH / ENTITIES ============ */
+.search-control-card{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+.search-input-wrapper{position:relative}
+.search-input-wrapper svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--faint);width:1.2em;height:1.2em}
+.search-input-wrapper input{width:100%;padding:15px 16px 15px 46px;border-radius:16px;border:1.5px solid transparent;background:var(--input);font-size:1rem}
+.search-input-wrapper input:focus{outline:none;border-color:var(--indigo-300);box-shadow:0 0 0 4px rgba(91,79,224,.14)}
+.filter-bar{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;background:var(--input);padding:4px;border-radius:14px}
+.seg button{padding:8px 16px;border-radius:11px;font-weight:700;font-size:.84rem;color:var(--muted);transition:all .2s}
+.seg button.active{background:var(--navy);color:#fff}
+[data-theme="dark"] .seg button.active{background:var(--mint);color:var(--navy)}
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.entity-card{display:flex;flex-direction:column;gap:14px;transition:transform .25s,box-shadow .25s;animation:rise .4s both}
+.entity-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.entity-header{display:flex;gap:14px;align-items:center}
+.entity-header h4{font-size:1.02rem}
+.entity-sub{font-size:.8rem;color:var(--muted)}
+.entity-desc{font-size:.88rem;color:var(--muted)}
+.entity-foot{display:flex;gap:8px;margin-top:auto}
+.entity-foot .btn{flex:1}
+.section-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--faint);margin:6px 0 14px}
+.empty{padding:40px;text-align:center;color:var(--muted);grid-column:1/-1}
+
+/* ============ MESSAGING ============ */
+.messaging-layout{display:grid;grid-template-columns:340px minmax(0,1fr);padding:0;overflow:hidden;height:min(720px,calc(100vh - 150px));min-height:520px}
+.chat-list{display:flex;flex-direction:column;border-right:1px solid var(--line);background:linear-gradient(180deg,rgba(91,79,224,.06),transparent 40%);min-height:0}
+.chat-list-head{padding:20px 18px 10px}
+.chat-list-head h3{font-size:1.2rem;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.chat-search{position:relative}
+.chat-search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--faint)}
+.chat-search input{width:100%;padding:11px 14px 11px 38px;border-radius:14px;border:none;background:var(--input);font-size:.88rem}
+.chat-search input:focus{outline:2px solid var(--indigo-300)}
+.chat-tabs{display:flex;gap:6px;margin-top:12px}
+.chat-tabs .chip{padding:6px 12px;font-size:.76rem}
+.chat-items{overflow:auto;padding:6px 10px 14px;flex:1}
+.chat-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--faint);padding:10px 10px 4px}
+.chat-item{display:flex;gap:12px;align-items:center;padding:12px;border-radius:16px;cursor:pointer;transition:background .2s,transform .2s;position:relative}
+.chat-item:hover{background:var(--input)}
+.chat-item.active{background:var(--navy-card);color:#fff;box-shadow:0 10px 22px -10px rgba(15,27,61,.7)}
+.chat-item.active .chat-preview,.chat-item.active .chat-time{color:#b9c2f0}
+.chat-item.active .presence{border-color:#1a2c66}
+.chat-item .meta{flex:1;min-width:0}
+.chat-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.chat-name{font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
+.chat-time{font-size:.7rem;color:var(--faint);flex:none}
+.chat-bottom{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:2px}
+.chat-preview{font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-preview.typing{color:var(--mint-600);font-weight:700}
+.unread{min-width:20px;height:20px;border-radius:99px;background:var(--mint);color:var(--navy);font-size:.68rem;font-weight:800;display:grid;place-items:center;padding:0 6px;flex:none}
+.group-av{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;place-items:stretch;gap:2px;padding:2px;background:var(--lav-200)}
+.group-av i{border-radius:5px;display:block}
+
+.chat-window{display:flex;flex-direction:column;min-width:0;min-height:0;background:linear-gradient(180deg,transparent,rgba(79,227,193,.05))}
+.chat-header{display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--card)}
+.chat-header .back{display:none}
+.chat-header h4{font-size:1rem;line-height:1.2}
+.chat-header .status{font-size:.78rem;color:var(--mint-600);font-weight:700;display:flex;align-items:center;gap:6px}
+.chat-header .status.off{color:var(--faint)}
+.chat-header .tools{margin-left:auto;display:flex;gap:8px}
+.chat-messages{flex:1;overflow:auto;padding:22px;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:22px 22px}
+.day-divider{align-self:center;font-size:.72rem;font-weight:700;color:var(--muted);background:var(--card-solid);padding:4px 14px;border-radius:99px;margin:10px 0;border:1px solid var(--line)}
+.msg-row{display:flex;gap:8px;align-items:flex-end;max-width:78%;animation:msgIn .35s cubic-bezier(.3,1.4,.5,1) both;position:relative}
+.msg-row.sent{align-self:flex-end;flex-direction:row-reverse}
+@keyframes msgIn{from{opacity:0;transform:translateY(12px) scale(.92)}}
+.msg{padding:11px 15px;border-radius:18px;font-size:.92rem;line-height:1.45;box-shadow:0 2px 8px -4px rgba(20,25,58,.2);word-wrap:break-word;overflow-wrap:anywhere}
+.msg-row.received .msg{background:var(--bubble-in);border-bottom-left-radius:5px}
+.msg-row.sent .msg{background:var(--bubble-out);color:#fff;border-bottom-right-radius:5px}
+.msg-col{display:flex;flex-direction:column;gap:3px;min-width:0}
+.msg-row.sent .msg-col{align-items:flex-end}
+.msg-meta{font-size:.68rem;color:var(--faint);display:flex;gap:5px;align-items:center;padding:0 4px}
+.tick{color:var(--faint);font-weight:800;letter-spacing:-3px} .tick.read{color:var(--mint-600)}
+.reactions{display:flex;gap:4px;margin-top:-6px;z-index:1}
+.reactions span{background:var(--card-solid);border:1px solid var(--line);border-radius:99px;padding:1px 7px;font-size:.78rem;box-shadow:0 2px 6px rgba(0,0,0,.1);animation:pop .25s}
+.react-bar{position:absolute;top:-34px;display:none;gap:2px;background:var(--card-solid);border:1px solid var(--line);padding:4px 6px;border-radius:99px;box-shadow:var(--shadow);z-index:5}
+.msg-row.sent .react-bar{right:40px} .msg-row.received .react-bar{left:40px}
+.msg-row:hover .react-bar{display:flex}
+.react-bar button{font-size:1rem;padding:2px 4px;border-radius:8px;transition:transform .15s}
+.react-bar button:hover{transform:scale(1.35)}
+.session-card{background:var(--navy-card);color:#fff;border-radius:16px;padding:14px 16px;min-width:230px;display:flex;flex-direction:column;gap:8px;font-size:.85rem}
+.session-card b{font-family:'Sora'} .session-card .btn{align-self:flex-start}
+.typing-row{display:flex;gap:8px;align-items:flex-end;align-self:flex-start;animation:msgIn .3s both}
+.typing-bubble{background:var(--bubble-in);padding:13px 16px;border-radius:18px;border-bottom-left-radius:5px;display:flex;gap:5px;box-shadow:0 2px 8px -4px rgba(20,25,58,.2)}
+.typing-bubble i{width:7px;height:7px;border-radius:50%;background:var(--indigo-300);animation:bounce 1.1s infinite}
+.typing-bubble i:nth-child(2){animation-delay:.15s} .typing-bubble i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-6px);opacity:1}}
+
+.composer{padding:12px 18px 18px;background:var(--card);border-top:1px solid var(--line);position:relative}
+.quick-replies{display:flex;gap:8px;margin-bottom:10px;overflow:auto;padding-bottom:2px}
+.quick-replies button{white-space:nowrap;padding:6px 13px;font-size:.78rem;font-weight:700;border-radius:99px;border:1.5px solid var(--indigo-300);color:var(--indigo);transition:all .2s}
+[data-theme="dark"] .quick-replies button{color:var(--mint);border-color:rgba(79,227,193,.4)}
+.quick-replies button:hover{background:var(--indigo);color:#fff;border-color:var(--indigo);transform:translateY(-1px)}
+.input-shell{display:flex;align-items:flex-end;gap:8px;background:var(--input);padding:7px 7px 7px 8px;border-radius:26px;border:1.5px solid transparent;transition:border .2s,box-shadow .25s,background .2s}
+.input-shell:focus-within{border-color:var(--indigo-300);box-shadow:0 0 0 5px rgba(91,79,224,.12);background:var(--card-solid)}
+.input-shell textarea{flex:1;border:none;background:none;resize:none;max-height:120px;padding:10px 4px;font-size:.94rem;line-height:1.4;outline:none}
+.input-shell .tool{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--muted);transition:all .2s;flex:none}
+.input-shell .tool:hover{background:var(--lav-200);color:var(--indigo);transform:rotate(8deg)}
+.send-btn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--indigo),#7a6cf5);box-shadow:0 8px 18px -8px rgba(91,79,224,.9);transition:transform .2s;flex:none;position:relative}
+.send-btn:hover{transform:scale(1.08) rotate(-6deg)}
+.send-btn.is-empty{background:var(--navy);box-shadow:none}
+.send-btn.fly svg{animation:fly .45s}
+@keyframes fly{40%{transform:translate(14px,-14px) scale(.6);opacity:0}41%{transform:translate(-14px,14px)}100%{transform:none;opacity:1}}
+.popover{position:absolute;bottom:calc(100% - 4px);left:18px;background:var(--card-solid);border:1px solid var(--card-border);border-radius:18px;box-shadow:var(--shadow-lg);padding:8px;z-index:20;animation:pop .2s}
+.popover.emoji{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;width:300px;padding:10px}
+.popover.emoji button{font-size:1.3rem;padding:5px;border-radius:10px} .popover.emoji button:hover{background:var(--input)}
+.popover.attach{display:flex;flex-direction:column;min-width:220px}
+.popover.attach button{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;font-weight:600;font-size:.88rem;text-align:left}
+.popover.attach button:hover{background:var(--input)}
+.popover.attach .ico{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--mint-100);color:#0b7a5f}
+
+/* ============ PROFILE ============ */
+.profile-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px;align-items:start}
+.profile-hero{padding:0;overflow:hidden}
+.profile-hero .cover{height:150px;background:linear-gradient(120deg,var(--navy),var(--indigo) 60%,var(--mint));position:relative}
+.profile-hero .cover::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.25),transparent 40%)}
+.profile-head{display:flex;gap:20px;align-items:flex-start;padding:0 28px;margin-top:-52px;flex-wrap:wrap}
+.profile-head .info{flex:1;padding-top:62px;min-width:200px}
+.profile-head h2{font-size:1.6rem}
+.profile-body{padding:20px 28px 28px}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+.stat{background:var(--input);border-radius:16px;padding:14px;text-align:center}
+.stat b{display:block;font-family:'Sora',sans-serif;font-size:1.4rem}
+.stat span{font-size:.74rem;color:var(--muted);font-weight:600}
+.profile-section{margin-top:26px}
+.profile-section h4{margin-bottom:12px;font-size:1rem;display:flex;align-items:center;gap:8px}
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.achv{padding:14px;border-radius:16px;background:var(--input);text-align:center;font-size:.8rem;transition:transform .2s}
+.achv:hover{transform:translateY(-3px) rotate(-1deg)}
+.achv .em{font-size:1.8rem;display:block;margin-bottom:4px}
+.achv b{display:block;font-size:.84rem} .achv small{color:var(--muted)}
+.achv.locked{opacity:.45;filter:grayscale(1)}
+.skill-meter{display:flex;flex-direction:column;gap:12px}
+.skill-line{display:grid;grid-template-columns:130px 1fr auto;gap:12px;align-items:center;font-size:.86rem;font-weight:700}
+.bar{height:9px;border-radius:99px;background:var(--lav-200);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--indigo),var(--mint));transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.add-tag{display:flex;gap:8px;margin-top:12px}
+.add-tag input{flex:1;padding:10px 14px;border-radius:12px;border:none;background:var(--input);font-size:.88rem}
+.req-card{padding:14px;border-radius:16px;background:var(--card-solid);border:1px solid var(--line);margin-top:12px;animation:rise .3s both}
+.req-card .top{display:flex;gap:12px;align-items:center}
+.req-card p{font-size:.84rem;color:var(--muted);margin:10px 0}
+.req-card .actions{display:flex;gap:8px}
+.state-pill{font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:99px}
+.state-pill.pending{background:#fff1d6;color:#a86400} .state-pill.accepted{background:var(--mint-100);color:#0b7a5f} .state-pill.declined{background:#ffe3e8;color:#c0314c}
+.tabs-inline{display:flex;gap:6px;margin-bottom:6px}
+
+/* ============ MODAL / TOAST ============ */
+.modal-back{position:fixed;inset:0;background:rgba(10,14,40,.55);backdrop-filter:blur(6px);z-index:100;display:grid;place-items:center;padding:20px;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.modal{width:100%;max-width:480px;background:var(--card-solid);border-radius:26px;padding:28px;box-shadow:var(--shadow-lg);border:1px solid var(--card-border);animation:pop .3s cubic-bezier(.3,1.4,.5,1)}
+.modal h3{font-size:1.3rem;margin-bottom:4px}
+.modal .btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.modal textarea.field{min-height:90px;resize:none}
+.toast-wrap{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:10px;z-index:200;align-items:center}
+.toast{background:var(--navy);color:#fff;padding:12px 20px;border-radius:16px;font-size:.88rem;font-weight:600;box-shadow:var(--shadow-lg);display:flex;gap:10px;align-items:center;animation:toastIn .4s cubic-bezier(.3,1.5,.5,1);border:1px solid rgba(79,227,193,.35)}
+.toast i{width:22px;height:22px;border-radius:50%;background:var(--mint);color:var(--navy);display:grid;place-items:center;font-style:normal;font-size:.75rem;font-weight:800}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.9)}}
+
+
+/* ============ FEED (simplified) ============ */
+.greet{display:flex;justify-content:space-between;align-items:center;gap:22px;flex-wrap:wrap;padding:30px 32px;position:relative;overflow:hidden}
+.greet::after{content:"";position:absolute;right:-60px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(79,227,193,.32),transparent 68%);pointer-events:none}
+.greet>*{position:relative;z-index:1}
+.greet-hi{font-size:.74rem;font-weight:800;color:var(--mint);letter-spacing:.12em;text-transform:uppercase}
+.greet h2{font-size:1.75rem;margin:6px 0 8px;color:#fff}
+.greet p{color:#b9c2f0;font-size:.95rem;max-width:430px}
+.greet-actions{display:flex;flex-direction:column;gap:10px;width:290px;max-width:100%}
+.btn-glass{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.18)}
+.btn-glass:hover{background:rgba(255,255,255,.18)}
+.greet-actions .btn{justify-content:space-between;overflow:hidden}
+.greet-actions .btn span.t{overflow:hidden;text-overflow:ellipsis}
+.rail-head{display:flex;justify-content:space-between;align-items:baseline;margin:6px 2px -4px}
+.rail-head h4{font-size:1.02rem}
+.rail{display:flex;gap:14px;overflow-x:auto;padding:6px 2px 14px;scroll-snap-type:x proximity;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail-card{flex:0 0 172px;scroll-snap-align:start;padding:20px 14px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform .25s,box-shadow .25s}
+.rail-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.rail-ring{--p:70;width:76px;height:76px;border-radius:50%;background:conic-gradient(var(--mint-600) calc(var(--p)*1%),var(--lav-200) 0);display:grid;place-items:center;margin-bottom:8px}
+.rail-ring .avatar{width:64px;height:64px;border-radius:50%;border:3px solid var(--card-solid);font-size:1.05rem}
+.rail-pct{font-size:.72rem;font-weight:800;color:#0b7a5f;background:var(--mint-100);padding:2px 10px;border-radius:99px}
+[data-theme="dark"] .rail-pct{color:var(--mint)}
+.rail-card b{font-size:.95rem;margin-top:4px}
+.rail-card small{color:var(--muted);font-size:.78rem;line-height:1.35;min-height:2.7em}
+.rail-card .btn{width:100%;margin-top:8px}
+.cmp{padding:16px 18px}
+.cmp-row{display:flex;gap:14px;align-items:flex-start}
+.cmp textarea{flex:1;border:none;background:var(--input);border-radius:16px;padding:14px 18px;height:50px;min-height:50px;resize:none;font-size:.95rem;transition:height .25s}
+.cmp textarea:focus{outline:2px solid var(--indigo-300)}
+.cmp.open textarea{height:96px}
+.cmp .foot{display:none;justify-content:space-between;gap:10px;align-items:center;margin-top:12px;padding-left:58px;flex-wrap:wrap}
+.cmp.open .foot{display:flex;animation:rise .25s}
+.cmp .chip{padding:6px 12px;font-size:.78rem}
+.feed-tabs{display:flex;gap:8px;overflow-x:auto;padding:2px;scrollbar-width:none}
+.feed-tabs::-webkit-scrollbar{display:none}
+.feed-tabs .chip{flex:none;padding:9px 16px;font-size:.84rem}
+.post-card{padding:22px 24px}
+.post-card:hover{transform:none}
+.vcheck{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--mint);color:var(--navy);font-size:.6rem;font-weight:900}
+.post-author{gap:7px}
+.post-header .match-pill{background:var(--mint-100);color:#0b7a5f;font-weight:700}
+[data-theme="dark"] .post-header .match-pill{color:var(--mint)}
+.post-body{font-size:1rem;line-height:1.6;margin-bottom:14px}
+.post-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.post-tags .tag{font-size:.74rem;padding:4px 11px}
+.why{background:none;border:none;padding:0;margin:0 0 14px;font-size:.8rem;color:var(--muted);font-weight:500}
+.why b{color:var(--text)}
+.why svg{color:var(--mint-600)}
+.action-btn.collab{background:linear-gradient(135deg,var(--indigo),#7a6cf5);color:#fff;padding:9px 16px;box-shadow:0 8px 18px -10px rgba(91,79,224,.9)}
+.action-btn.collab:hover{background:linear-gradient(135deg,var(--indigo-600),var(--indigo));color:#fff}
+.action-btn.collab.sent{background:var(--mint-100);color:#0b7a5f;box-shadow:none}
+.side-col .card{padding:22px}
+.side-col .section-h h4{font-size:1rem}
+.pill-tags{display:flex;flex-wrap:wrap;gap:8px}
+.pill-tags .tag{font-size:.8rem;padding:6px 13px}
+.stack{gap:20px;min-width:0}
+.feed-layout>*{min-width:0}
+.greet-actions .btn{min-width:0}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1100px){
+  .feed-layout{grid-template-columns:minmax(0,1fr) 300px}
+  .feed-layout .side-col.left{display:none}
+}
+@media (max-width:860px){
+  .top-nav{top:8px;gap:8px;padding:8px 10px;backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--card-solid)}
+  .nav-brand{font-size:.95rem}
+  .greet{padding:24px 22px}.greet-actions{width:100%;max-width:none}
+  #logoutBtn{display:none}
+  .nav-tabs{position:fixed;bottom:12px;left:12px;right:12px;justify-content:space-around;background:var(--nav-bg);backdrop-filter:blur(18px);border:1px solid var(--card-border);box-shadow:var(--shadow-lg);border-radius:22px;padding:6px;z-index:60}
+  .tab-btn{flex-direction:column;gap:2px;padding:8px 6px;font-size:.66rem;flex:1}
+  .tab-btn svg{width:1.35em;height:1.35em}
+  .nav-user span{display:none}.nav-user{padding:4px}
+  .feed-layout{grid-template-columns:1fr}.feed-layout .side-col.right{display:none}
+  .profile-grid{grid-template-columns:1fr}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .messaging-layout{grid-template-columns:1fr;height:calc(100vh - 190px)}
+  .messaging-layout .chat-window{display:none}
+  .messaging-layout.chat-open .chat-list{display:none}
+  .messaging-layout.chat-open .chat-window{display:flex}
+  .chat-header .back{display:grid}
+  .msg-row{max-width:90%}
+  .menu-pop{position:fixed;left:12px;right:12px;width:auto;top:76px}
+  .skill-line{grid-template-columns:100px 1fr auto}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
 
-  <!-- AUTH SCREEN -->
-  <div id="auth-view" class="auth-wrapper">
-    <div class="card auth-card">
-      <h1 class="brand-title">CampusConnect</h1>
-      <p class="brand-subtitle">Verified Campus Skill Exchange & Community</p>
-      
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="fullName">Full Name</label>
-          <input type="text" id="fullName" placeholder="e.g. Alex Sharma" required />
-        </div>
-        <div class="form-group">
-          <label for="campusEmail">Institutional Email</label>
-          <input type="email" id="campusEmail" placeholder="student@college.edu" required />
-        </div>
-        <div class="form-group">
-          <label for="department">Department</label>
-          <select id="department" required>
-            <option value="Computer Science">Computer Science & Eng</option>
-            <option value="Information Tech">Information Technology</option>
-            <option value="Electronics">Electronics & Telecom</option>
-            <option value="Mechanical">Mechanical Engineering</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Verify & Enter</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- DASHBOARD SCREEN -->
-  <div id="dashboard-view">
-    <!-- Navbar -->
-    <header class="top-nav">
-      <div class="nav-brand">CampusConnect</div>
-      
-      <nav class="nav-tabs">
-        <button class="tab-btn active" data-tab="feed-tab">Feed</button>
-        <button class="tab-btn" data-tab="search-tab">Search</button>
-        <button class="tab-btn" data-tab="communities-tab">Communities</button>
-        <button class="tab-btn" data-tab="messages-tab">Messages</button>
-        <button class="tab-btn" data-tab="profile-tab">Profile</button>
+<!-- ================= LANDING / AUTH ================= -->
+<div id="auth-view" class="landing">
+  <header class="l-nav">
+    <div class="wrap">
+      <div class="l-brand"><span class="logo-mark" data-icon="link"></span><div>Campus<b>Connect</b><small>Verified Campus Skill Exchange</small></div></div>
+      <nav class="l-links">
+        <a href="#about" data-scroll>About</a><a href="#how" data-scroll>How it works</a><a href="#features" data-scroll>Features</a><a href="#trust" data-scroll>Trust</a>
       </nav>
+      <a href="#join" data-scroll class="btn btn-primary btn-sm" style="text-decoration:none">Get started</a>
+    </div>
+  </header>
 
-      <div class="nav-actions">
-        <button id="themeToggle" class="btn-icon" title="Toggle Theme">🌓</button>
-        <button id="logoutBtn" class="btn-text">Logout</button>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="pill"><i></i>The skill-swap network for verified students</span>
+      <h1>Connect, Collaborate, and <span class="grad">Build with Peers</span> on Your Campus</h1>
+      <p class="lead">CampusConnect helps you find teammates, study partners and hackathon buddies from your own college. Share what you can teach, find what you want to learn, and start building together.</p>
+      <div class="hero-cta">
+        <a href="#join" data-scroll class="btn btn-primary btn-lg" style="text-decoration:none">Get Started with College Email <span data-icon="arrow"></span></a>
+        <a href="#how" data-scroll class="btn btn-dark btn-lg" style="text-decoration:none"><span data-icon="users"></span>See how it works</a>
       </div>
-    </header>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>&lt;2<span>min</span></b><small>to set up your profile</small></div>
+        <div class="hero-stat"><b>100<span>%</span></b><small>.edu-verified students</small></div>
+        <div class="hero-stat"><b>4</b><small>skill categories</small></div>
+        <div class="hero-stat"><b>5<span>★</span></b><small>trust ratings both ways</small></div>
+      </div>
+      <div class="scroll-hint">Scroll to explore <span data-icon="arrow" style="transform:rotate(90deg)"></span></div>
+    </div>
+  </section>
 
-    <main class="content-container">
-      
-      <!-- TAB 1: SOCIAL FEED (INSTAGRAM STYLE) -->
-      <section id="feed-tab" class="tab-pane active">
-        <div class="feed-layout">
-          <div class="feed-stream">
-            
-            <!-- Create Post Box -->
-            <div class="card post-creator">
-              <textarea id="postInput" placeholder="Share a project update, question, or skill request..."></textarea>
-              <div class="post-creator-footer">
-                <button id="submitPostBtn" class="btn btn-primary btn-sm">Post</button>
-              </div>
+  <!-- ABOUT -->
+  <section class="l-sec" id="about">
+    <div class="wrap">
+      <div class="head reveal"><span class="eyebrow">What is CampusConnect?</span>
+        <h2>One place for every skill on your campus</h2>
+        <p>Most students have skills others need, but nobody can see them. CampusConnect makes those skills searchable, safe and easy to swap.</p></div>
+      <div class="ps-list">
+        <div class="ps reveal"><div class="box"><small>Before</small>Skills are hidden inside WhatsApp groups</div><div class="arrow" data-icon="arrow"></div><div class="box good"><small>With CampusConnect</small>Searchable profiles with skill badges</div></div>
+        <div class="ps reveal"><div class="box"><small>Before</small>Anyone can join, with no way to know who they are</div><div class="arrow" data-icon="arrow"></div><div class="box good"><small>With CampusConnect</small>Only verified college emails get in</div></div>
+        <div class="ps reveal"><div class="box"><small>Before</small>Hard to find a teammate who fits</div><div class="arrow" data-icon="arrow"></div><div class="box good"><small>With CampusConnect</small>Matches based on what you offer and want</div></div>
+        <div class="ps reveal"><div class="box"><small>Before</small>Study groups fade away after a week</div><div class="arrow" data-icon="arrow"></div><div class="box good"><small>With CampusConnect</small>Lasting hubs and chats with events</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="l-sec" id="how">
+    <div class="wrap">
+      <div class="head reveal"><span class="eyebrow">How it works</span><h2>Four simple steps</h2><p>From sign-up to your first collaboration, it takes minutes.</p></div>
+      <div class="steps">
+        <div class="step reveal"><div class="num">1</div><div class="txt"><h3>Verify with your college email</h3><p>Sign in with your .edu address so everyone on the platform is a real student from your campus.</p></div></div>
+        <div class="step reveal"><div class="num">2</div><div class="txt"><h3>Add what you offer and what you want</h3><p>List the skills you can teach and the ones you want to learn. These two lists power your matches.</p></div></div>
+        <div class="step reveal"><div class="num">3</div><div class="txt"><h3>Get matched with peers</h3><p>Your feed and suggestions show people whose skills fit your goals, and who want what you know.</p></div></div>
+        <div class="step reveal"><div class="num">4</div><div class="txt"><h3>Chat, collaborate and rate</h3><p>Send a collaboration request, plan a study session in chat, and rate each other afterwards to build trust.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="l-sec" id="features">
+    <div class="wrap">
+      <div class="head reveal"><span class="eyebrow">Features</span><h2>Everything you need to collaborate</h2><p>Simple tools, all in one place.</p></div>
+      <div class="feat-grid">
+        <div class="feat reveal"><div class="ico" data-icon="award"></div><h3>Skill badges</h3><p>Show your level, from Bronze to Gold, so peers know what you're great at.</p></div>
+        <div class="feat reveal"><div class="ico" data-icon="spark"></div><h3>Personalised feed</h3><p>Posts are ranked by what you want to learn, with a match score on each one.</p></div>
+        <div class="feat reveal"><div class="ico" data-icon="users"></div><h3>Collaboration requests</h3><p>Invite someone to a project in one tap and track every request you sent or received.</p></div>
+        <div class="feat reveal"><div class="ico" data-icon="calendar"></div><h3>Events with RSVP</h3><p>Workshops, hackathons and meetups, with Going, Interested and Can't go options.</p></div>
+        <div class="feat reveal"><div class="ico" data-icon="chat"></div><h3>Live chat</h3><p>One-to-one and group chats with typing indicators, reactions and quick replies.</p></div>
+        <div class="feat reveal"><div class="ico" data-icon="link"></div><h3>Community hubs</h3><p>Join clubs, squads and study circles that stay active all year.</p></div>
+      </div>
+      <div class="cat-row reveal"><span>📚 Academic</span><span>🎨 Creative</span><span>💪 Fitness</span><span>💼 Micro-Gigs</span></div>
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <section class="l-sec" id="trust">
+    <div class="wrap">
+      <div class="head reveal"><span class="eyebrow">Trust &amp; safety</span><h2>Built for a safe campus network</h2></div>
+      <div class="trust-grid">
+        <div class="trust reveal"><span class="em">🛡️</span><h3>Verified students only</h3><p>Every account is checked against a college email domain.</p></div>
+        <div class="trust reveal"><span class="em">⭐</span><h3>Two-way ratings</h3><p>Both people rate each session, so reliable peers rise to the top.</p></div>
+        <div class="trust reveal"><span class="em">🤝</span><h3>Peer moderation</h3><p>Hub leads review flagged content before it goes further.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JOIN -->
+  <section class="l-sec" id="join">
+    <div class="wrap">
+      <div class="head reveal"><span class="eyebrow">Join now</span><h2>Ready to find your people?</h2><p>Enter your details to verify your college email and step in.</p></div>
+      <div class="join-box reveal">
+        <div class="card auth-card">
+          <form id="loginForm" novalidate>
+            <div class="form-group">
+              <label for="fullName">Full Name</label>
+              <input class="field" type="text" id="fullName" placeholder="e.g. Alex Sharma" required />
             </div>
-
-            <!-- Posts List -->
-            <div id="postsList">
-              <article class="card post-card">
-                <div class="post-header">
-                  <div class="avatar">RM</div>
-                  <div>
-                    <div class="post-author">Rohan Mehta <span class="badge">Verified</span></div>
-                    <div class="post-time">2 hours ago • Computer Science</div>
-                  </div>
-                </div>
-                <div class="post-body">
-                  Just finished setting up our PyTorch training pipeline for our NLP mini-project! Looking for someone who can help with building a Flask backend API to serve the model. Drop a message or swap request!
-                </div>
-                <div class="post-actions">
-                  <button class="action-btn like-btn">❤️ <span>14</span></button>
-                  <button class="action-btn">💬 Comment</button>
-                  <button class="action-btn">🔄 Swap Skill</button>
-                </div>
-              </article>
-
-              <article class="card post-card">
-                <div class="post-header">
-                  <div class="avatar">PP</div>
-                  <div>
-                    <div class="post-author">Priya Patil <span class="badge">Verified</span></div>
-                    <div class="post-time">5 hours ago • Information Tech</div>
-                  </div>
-                </div>
-                <div class="post-body">
-                  Designed wireframes and interactive UI mockups for our smart campus navigation app. Would love feedback from fellow frontend developers on component structure!
-                </div>
-                <div class="post-actions">
-                  <button class="action-btn like-btn">❤️ <span>28</span></button>
-                  <button class="action-btn">💬 Comment</button>
-                  <button class="action-btn">🔄 Swap Skill</button>
-                </div>
-              </article>
+            <div class="form-group">
+              <label for="campusEmail">Institutional Email</label>
+              <input class="field" type="email" id="campusEmail" placeholder="student@college.edu" required />
+              <div class="field-hint" id="emailHint">Must end with .edu or .edu.in / .ac.in</div>
             </div>
-          </div>
+            <div class="form-group">
+              <label for="department">Department</label>
+              <select class="field" id="department" required>
+                <option value="Computer Science">Computer Science &amp; Eng</option>
+                <option value="Information Tech">Information Technology</option>
+                <option value="Electronics">Electronics &amp; Telecom</option>
+                <option value="Mechanical">Mechanical Engineering</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Verify &amp; Enter <span data-icon="arrow"></span></button>
+          </form>
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
-      <!-- TAB 2: SEARCH & DISCOVERY -->
-      <section id="search-tab" class="tab-pane">
-        <div class="card search-control-card">
-          <div class="search-input-wrapper">
-            <input type="text" id="globalSearchInput" placeholder="Search for people or communities..." />
-          </div>
-          <div class="filter-toggle-group">
-            <label class="filter-radio">
-              <input type="radio" name="searchFilter" value="profiles" checked />
-              <span>Individual Profiles</span>
-            </label>
-            <label class="filter-radio">
-              <input type="radio" name="searchFilter" value="communities" />
-              <span>Communities</span>
-            </label>
-          </div>
-        </div>
+  <footer class="l-foot"><div class="wrap">© CampusConnect · Verified Campus Skill Exchange &amp; Community</div></footer>
+</div>
 
-        <!-- Profiles Search Results -->
-        <div id="profileResults" class="results-grid">
-          <div class="card entity-card" data-name="rohan mehta" data-dept="computer science" data-skill="pytorch python">
-            <div class="entity-header">
-              <div class="avatar">RM</div>
-              <div>
-                <h4>Rohan Mehta</h4>
-                <p class="entity-sub">Computer Science • 3rd Year</p>
-              </div>
-            </div>
-            <div class="tag-row">
-              <span class="tag">Python</span>
-              <span class="tag">PyTorch</span>
-              <span class="tag">ML</span>
-            </div>
-            <button class="btn btn-outline btn-sm">View Profile</button>
-          </div>
+<!-- ================= DASHBOARD ================= -->
+<div id="dashboard-view" class="hidden">
+  <header class="top-nav">
+    <div class="nav-brand"><span class="logo-mark" data-icon="link"></span> CampusConnect</div>
 
-          <div class="card entity-card" data-name="priya patil" data-dept="information tech" data-skill="figma ui ux">
-            <div class="entity-header">
-              <div class="avatar">PP</div>
-              <div>
-                <h4>Priya Patil</h4>
-                <p class="entity-sub">Information Tech • 2nd Year</p>
-              </div>
-            </div>
-            <div class="tag-row">
-              <span class="tag">UI/UX</span>
-              <span class="tag">Figma</span>
-              <span class="tag">CSS</span>
-            </div>
-            <button class="btn btn-outline btn-sm">View Profile</button>
-          </div>
+    <nav class="nav-tabs" id="navTabs" aria-label="Main">
+      <span class="nav-pill" id="navPill"></span>
+      <button class="tab-btn active" data-tab="feed-tab"><span data-icon="home"></span>Feed</button>
+      <button class="tab-btn" data-tab="search-tab"><span data-icon="search"></span>Discover</button>
+      <button class="tab-btn" data-tab="communities-tab"><span data-icon="users"></span>Hubs</button>
+      <button class="tab-btn" data-tab="events-tab"><span data-icon="calendar"></span>Events</button>
+      <button class="tab-btn" data-tab="messages-tab"><span data-icon="chat"></span>Messages <b class="cnt hidden" id="msgCnt"></b></button>
+      <button class="tab-btn" data-tab="profile-tab"><span data-icon="user"></span>Profile</button>
+    </nav>
 
-          <div class="card entity-card" data-name="siddharth joshi" data-dept="computer science" data-skill="c++ dsa">
-            <div class="entity-header">
-              <div class="avatar">SJ</div>
-              <div>
-                <h4>Siddharth Joshi</h4>
-                <p class="entity-sub">Computer Science • 2nd Year</p>
-              </div>
-            </div>
-            <div class="tag-row">
-              <span class="tag">C++</span>
-              <span class="tag">DSA</span>
-              <span class="tag">LeetCode</span>
-            </div>
-            <button class="btn btn-outline btn-sm">View Profile</button>
-          </div>
-        </div>
+    <div class="nav-actions">
+      <button id="bellBtn" class="btn-icon" title="Notifications" aria-label="Notifications"><span data-icon="bell"></span><b class="dot-badge hidden" id="bellCnt">0</b></button>
+      <button id="themeToggle" class="btn-icon" title="Toggle theme" aria-label="Toggle theme"><span data-icon="moon"></span></button>
+      <button class="nav-user" id="userChip" data-tab-link="profile-tab"><div class="avatar av-1" id="navAvatar">ST</div><span id="navName">Student</span></button>
+      <button id="logoutBtn" class="btn-icon" title="Logout" aria-label="Logout"><span data-icon="logout"></span></button>
+      <div class="menu-pop hidden" id="notifPop"></div>
+    </div>
+  </header>
 
-        <!-- Communities Search Results -->
-        <div id="communityResults" class="results-grid" style="display: none;">
-          <div class="card entity-card" data-name="ai & ml study circle" data-desc="neural networks machine learning">
-            <div class="entity-header">
-              <div class="avatar">#AI</div>
-              <div>
-                <h4>AI & ML Study Circle</h4>
-                <p class="entity-sub">128 Members</p>
-              </div>
-            </div>
-            <p class="entity-desc">Weekly discussions, paper breakdowns, and Kaggle team matchmaking.</p>
-            <button class="btn btn-outline btn-sm">Join Community</button>
-          </div>
+  <main class="content-container">
 
-          <div class="card entity-card" data-name="frontend developers hub" data-desc="react web ui css javascript">
-            <div class="entity-header">
-              <div class="avatar">#FE</div>
-              <div>
-                <h4>Frontend Developers Hub</h4>
-                <p class="entity-sub">94 Members</p>
-              </div>
-            </div>
-            <p class="entity-desc">Showcase UI components, debug CSS, and build hackathon UIs together.</p>
-            <button class="btn btn-outline btn-sm">Join Community</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 3: MY COMMUNITIES -->
-      <section id="communities-tab" class="tab-pane">
-        <div class="results-grid">
-          <div class="card entity-card">
-            <div class="entity-header">
-              <div class="avatar">#WD</div>
-              <div>
-                <h4>Web-Dev-Guild</h4>
-                <p class="entity-sub">Active Discussions: 14</p>
-              </div>
-            </div>
-            <p class="entity-desc">Campus group dedicated to full-stack projects, architecture design, and REST APIs.</p>
-            <button class="btn btn-primary btn-sm">Open Hub</button>
-          </div>
-
-          <div class="card entity-card">
-            <div class="entity-header">
-              <div class="avatar">#HS</div>
-              <div>
-                <h4>Hackathon-Squads</h4>
-                <p class="entity-sub">Active Discussions: 23</p>
-              </div>
-            </div>
-            <p class="entity-desc">Form multi-disciplinary teams for upcoming college and regional hackathons.</p>
-            <button class="btn btn-primary btn-sm">Open Hub</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 4: MESSAGING -->
-      <section id="messages-tab" class="tab-pane">
-        <div class="card messaging-layout">
-          <div class="chat-list">
-            <div class="chat-item active">
-              <div class="avatar sm">RM</div>
-              <div>
-                <div class="chat-name">Rohan Mehta</div>
-                <div class="chat-preview">Hey, want to collaborate on...</div>
-              </div>
-            </div>
-            <div class="chat-item">
-              <div class="avatar sm">PP</div>
-              <div>
-                <div class="chat-name">Priya Patil</div>
-                <div class="chat-preview">I checked your UI draft!</div>
-              </div>
-            </div>
-          </div>
-          <div class="chat-window">
-            <div class="chat-header">Rohan Mehta</div>
-            <div class="chat-messages">
-              <div class="msg received">Hey, are you free to discuss the Flask API integration for the ML project?</div>
-              <div class="msg sent">Yes! I have standard schema templates ready. Let's sync today.</div>
-            </div>
-            <div class="chat-input-row">
-              <input type="text" placeholder="Type a message..." />
-              <button class="btn btn-primary btn-sm">Send</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 5: PROFILE -->
-      <section id="profile-tab" class="tab-pane">
-        <div class="card profile-card">
-          <div class="profile-header-main">
-            <div class="avatar lg" id="profileAvatar">ST</div>
+    <!-- FEED -->
+    <section id="feed-tab" class="tab-pane active">
+      <div class="feed-layout">
+        <div class="stack">
+          <div class="card navy greet">
             <div>
-              <h2 id="profileNameDisplay">Student User</h2>
-              <p class="text-muted" id="profileDeptDisplay">Department</p>
-              <span class="badge">● Verified Institutional Account</span>
+              <span class="greet-hi" id="greetHi">Good day</span>
+              <h2 id="greetName">Welcome back</h2>
+              <p id="greetSub">Here is what's new on campus.</p>
+            </div>
+            <div class="greet-actions">
+              <button class="btn btn-mint" data-tab-link="profile-tab"><span class="t" id="greetReq">View collab requests</span><span data-icon="arrow"></span></button>
+              <button class="btn btn-glass" data-tab-link="events-tab"><span class="t" id="greetEv">See events</span><span data-icon="arrow"></span></button>
             </div>
           </div>
 
-          <hr class="divider" />
+          <div>
+            <div class="rail-head"><h4>People you may click with</h4><button class="link-btn" data-tab-link="search-tab">See all</button></div>
+            <div class="rail" id="suggestList"></div>
+          </div>
 
-          <div class="profile-section">
-            <h4>Skills Offered</h4>
-            <div class="tag-row">
-              <span class="tag">HTML & CSS</span>
-              <span class="tag">JavaScript</span>
-              <span class="tag">Python Logic</span>
+          <div class="card cmp" id="composer">
+            <div class="cmp-row">
+              <div class="avatar av-1" id="cmpAvatar">ST</div>
+              <textarea id="postInput" placeholder="What are you working on or looking for?"></textarea>
+            </div>
+            <div class="foot">
+              <div class="chip-row" id="composeCats"></div>
+              <button id="submitPostBtn" class="btn btn-primary btn-sm"><span data-icon="send"></span>Post</button>
             </div>
           </div>
 
-          <div class="profile-section">
-            <h4>Skills Desired</h4>
-            <div class="tag-row">
-              <span class="tag">Machine Learning</span>
-              <span class="tag">Distributed Systems</span>
+          <div class="feed-tabs" id="feedCats"></div>
+          <div id="postsList" class="stack"></div>
+        </div>
+
+        <aside class="side-col right">
+          <div class="card">
+            <div class="section-h"><h4>Upcoming events</h4><button class="link-btn" data-tab-link="events-tab">View all</button></div>
+            <div id="miniEvents"></div>
+          </div>
+          <div class="card">
+            <div class="section-h"><h4>Trending skills</h4></div>
+            <div id="trendList" class="pill-tags"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- SEARCH -->
+    <section id="search-tab" class="tab-pane">
+      <div class="page-title"><div><h2>Discover</h2><p class="muted">Find peers by skill, department or the community that fits you.</p></div></div>
+      <div class="card search-control-card">
+        <div class="search-input-wrapper">
+          <span data-icon="search"></span>
+          <input type="text" id="globalSearchInput" placeholder="Search for people, skills or communities…" />
+        </div>
+        <div class="filter-bar">
+          <div class="seg" id="searchFilter"><button class="active" data-f="profiles">Individual Profiles</button><button data-f="communities">Communities</button></div>
+          <div class="chip-row" id="searchCats"></div>
+        </div>
+      </div>
+      <div id="profileResults" class="results-grid"></div>
+      <div id="communityResults" class="results-grid hidden"></div>
+    </section>
+
+    <!-- COMMUNITIES -->
+    <section id="communities-tab" class="tab-pane">
+      <div class="page-title"><div><h2>My Hubs</h2><p class="muted">Clubs and groups you're part of.</p></div><button class="btn btn-mint" data-tab-link="search-tab" data-after="communities"><span data-icon="plus"></span>Find more hubs</button></div>
+      <div id="myCommunities" class="results-grid"></div>
+    </section>
+
+    <!-- EVENTS -->
+    <section id="events-tab" class="tab-pane">
+      <div class="page-title">
+        <div><h2>Campus Events</h2><p class="muted">RSVP so organisers and your squad know you're coming.</p></div>
+        <div class="seg" id="eventFilter"><button class="active" data-ef="all">All</button><button data-ef="going">Going</button><button data-ef="interested">Interested</button></div>
+      </div>
+      <div id="eventsGrid" class="events-grid"></div>
+    </section>
+
+    <!-- MESSAGES -->
+    <section id="messages-tab" class="tab-pane">
+      <div class="card messaging-layout" id="msgLayout">
+        <aside class="chat-list">
+          <div class="chat-list-head">
+            <h3>Messages <button class="btn-icon" style="width:36px;height:36px" id="newChatBtn" title="New message" aria-label="New message"><span data-icon="edit"></span></button></h3>
+            <div class="chat-search"><span data-icon="search"></span><input type="text" id="chatSearch" placeholder="Search conversations" /></div>
+            <div class="chat-tabs" id="chatTabs"><button class="chip active" data-ct="all">All</button><button class="chip" data-ct="unread">Unread</button><button class="chip" data-ct="groups">Groups</button></div>
+          </div>
+          <div class="chat-items" id="chatItems"></div>
+        </aside>
+        <div class="chat-window" id="chatWindow"></div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="profile-tab" class="tab-pane">
+      <div class="profile-grid">
+        <div class="stack">
+          <div class="card profile-hero">
+            <div class="cover"></div>
+            <div class="profile-head">
+              <div class="avatar lg av-1" id="profileAvatar">ST</div>
+              <div class="info">
+                <h2 id="profileNameDisplay">Student User</h2>
+                <p class="muted" id="profileDeptDisplay">Department</p>
+              </div>
+              <div style="padding-top:68px"><span class="verified">✓ Verified Institutional Account</span></div>
+            </div>
+            <div class="profile-body">
+              <div class="stat-row">
+                <div class="stat"><b id="pConn">12</b><span>Connections</span></div>
+                <div class="stat"><b id="pSwaps">5</b><span>Skill swaps</span></div>
+                <div class="stat"><b>4.8 <span class="stars">★</span></b><span>Trust score</span></div>
+                <div class="stat"><b id="pEvents">0</b><span>Events joined</span></div>
+              </div>
+
+              <div class="profile-section">
+                <h4><span data-icon="award"></span>Skill badges</h4>
+                <div class="tag-row" id="mySkillBadges"></div>
+                <div class="skill-meter" id="skillMeter" style="margin-top:18px"></div>
+                <div class="add-tag"><input id="addSkillInput" placeholder="Add a skill you offer (e.g. Figma)" /><button class="btn btn-primary btn-sm" id="addSkillBtn">Add</button></div>
+              </div>
+
+              <div class="profile-section">
+                <h4><span data-icon="target"></span>Skills desired</h4>
+                <div class="tag-row" id="myWants"></div>
+                <div class="add-tag"><input id="addWantInput" placeholder="Something you want to learn…" /><button class="btn btn-outline btn-sm" id="addWantBtn">Add</button></div>
+                <p class="field-hint">Your feed &amp; matches re-rank instantly based on what you want to learn.</p>
+              </div>
             </div>
           </div>
         </div>
-      </section>
 
-    </main>
-  </div>
+        <div class="stack">
+          <div class="card">
+            <div class="section-h"><h4>🤝 Collaboration requests</h4><span class="state-pill pending" id="reqCount">0 pending</span></div>
+            <div class="seg" id="reqTabs" style="margin-bottom:4px"><button class="active" data-rt="in">Received</button><button data-rt="out">Sent</button></div>
+            <div id="reqList"></div>
+          </div>
+          <div class="card navy">
+            <div class="section-h"><h4>🏆 Achievements</h4></div>
+            <div class="badge-grid" id="achvGrid"></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <script src="rubric_2.js"></script>
+  </main>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+/* =====================================================================
+   CampusConnect front-end (vanilla JS)
+   All data below is local demo data. Each "// API:" comment marks where
+   you can swap in a fetch() call to your Flask endpoints.
+   ===================================================================== */
+
+/* ---------- icons ---------- */
+const P = {
+  home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 010 6.8M18 14.8c2 .7 3.2 2.4 3.5 5.2"/>',
+  calendar:'<rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 10h18M8 2.5v4M16 2.5v4"/>',
+  chat:'<path d="M21 12a8 8 0 01-11.6 7.1L4 20l1.1-4.5A8 8 0 1121 12z"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c.6-4 4-6 8-6s7.4 2 8 6"/>',
+  bell:'<path d="M6 9a6 6 0 0112 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 004 0"/>',
+  moon:'<path d="M20 14.5A8.5 8.5 0 019.5 4 8.5 8.5 0 1020 14.5z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  logout:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>',
+  heart:'<path d="M20.8 5.6a5.2 5.2 0 00-7.4 0L12 7l-1.4-1.4a5.2 5.2 0 00-7.4 7.4L12 21.5l8.8-8.5a5.2 5.2 0 000-7.4z"/>',
+  comment:'<path d="M21 12a8 8 0 01-11.6 7.1L4 20l1.1-4.5A8 8 0 1121 12z"/>',
+  swap:'<path d="M17 3l4 4-4 4M21 7H8M7 21l-4-4 4-4M3 17h13"/>',
+  send:'<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>',
+  mic:'<rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/>',
+  smile:'<circle cx="12" cy="12" r="9"/><path d="M8 14a4.5 4.5 0 008 0M9 9.5h.01M15 9.5h.01"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  back:'<path d="M19 12H5M11 18l-6-6 6-6"/>',
+  shield:'<path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><path d="M8.5 12l2.5 2.5L16 9.5"/>',
+  spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z"/>',
+  star:'<path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9L12 3z"/>',
+  link:'<path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3A4 4 0 0011 18.7l1-1"/>',
+  award:'<circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  pin:'<path d="M12 22s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/>',
+  paperclip:'<path d="M21 11l-9.2 9.2a5.5 5.5 0 01-7.8-7.8l9.2-9.2a3.7 3.7 0 015.2 5.2l-9.2 9.2a1.8 1.8 0 01-2.6-2.6L15.8 6"/>',
+  phone:'<path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/>',
+  video:'<rect x="2" y="6" width="14" height="12" rx="3"/><path d="M16 10l6-3v10l-6-3"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>'
+};
+const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[n]||''}</svg>`;
+const hydrateIcons = (root=document) => root.querySelectorAll('[data-icon]').forEach(el => { if(!el.dataset.done){ el.innerHTML = ic(el.dataset.icon); el.dataset.done=1; el.style.display='inline-flex'; } });
+
+/* ---------- helpers ---------- */
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const initials = n => n.trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase() || 'ST';
+const lc = s => s.toLowerCase();
+const stars = n => '★'.repeat(Math.round(n)) + '☆'.repeat(5-Math.round(n));
+const nowT = () => new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+function toast(msg){ const t=document.createElement('div'); t.className='toast'; t.innerHTML=`<i>✓</i>${esc(msg)}`; $('#toasts').appendChild(t); setTimeout(()=>{t.style.transition='all .3s';t.style.opacity=0;t.style.transform='translateY(10px)';setTimeout(()=>t.remove(),300)},2600); }
+const CATS = ['Academic','Creative','Fitness','Micro-Gigs'];
+const CAT_EMOJI = {Academic:'📚',Creative:'🎨',Fitness:'💪','Micro-Gigs':'💼'};
+
+/* ---------- demo data ---------- */
+const USERS = {
+  rohan:{name:'Rohan Mehta',dept:'Computer Science',year:'3rd Year',av:'av-1',trust:4.9,reviews:23,online:true,
+    skills:[{n:'Python',lvl:'Gold',pct:92},{n:'PyTorch',lvl:'Silver',pct:74},{n:'ML',lvl:'Silver',pct:70}],wants:['Flask','Docker'],cat:'Academic'},
+  priya:{name:'Priya Patil',dept:'Information Tech',year:'2nd Year',av:'av-2',trust:4.8,reviews:17,online:true,
+    skills:[{n:'UI/UX',lvl:'Gold',pct:90},{n:'Figma',lvl:'Gold',pct:88},{n:'CSS',lvl:'Silver',pct:72}],wants:['React','Machine Learning'],cat:'Creative'},
+  sid:{name:'Siddharth Joshi',dept:'Computer Science',year:'2nd Year',av:'av-3',trust:4.6,reviews:11,online:false,
+    skills:[{n:'C++',lvl:'Silver',pct:78},{n:'DSA',lvl:'Gold',pct:85},{n:'LeetCode',lvl:'Silver',pct:70}],wants:['Distributed Systems','Web Dev'],cat:'Academic'},
+  ananya:{name:'Ananya Rao',dept:'Electronics',year:'3rd Year',av:'av-4',trust:4.7,reviews:14,online:true,
+    skills:[{n:'Arduino',lvl:'Gold',pct:91},{n:'IoT',lvl:'Silver',pct:75},{n:'Embedded C',lvl:'Silver',pct:68}],wants:['Python','Machine Learning'],cat:'Academic'},
+  kabir:{name:'Kabir Shah',dept:'Mechanical',year:'4th Year',av:'av-5',trust:4.5,reviews:9,online:false,
+    skills:[{n:'Yoga',lvl:'Gold',pct:90},{n:'Calisthenics',lvl:'Silver',pct:76},{n:'Video Editing',lvl:'Bronze',pct:45}],wants:['JavaScript','Photography'],cat:'Fitness'}
+};
+const me = {name:'Student User',dept:'Computer Science',email:'',
+  skills:[{n:'HTML & CSS',lvl:'Silver',pct:78},{n:'JavaScript',lvl:'Silver',pct:70},{n:'Python Logic',lvl:'Bronze',pct:48}],
+  wants:['Machine Learning','Distributed Systems'], conn:12, swaps:5};
+
+const POSTS = [
+  {id:1,uid:'rohan',t:'2 hours ago',ts:2,cat:'Academic',tags:['PyTorch','Flask','Machine Learning'],likes:14,comments:[{uid:'priya',text:'Nice! Happy to review your model card.'}],
+   body:'Just finished setting up our PyTorch training pipeline for our NLP mini-project! Looking for someone who can help with building a Flask backend API to serve the model. Drop a message or swap request!',kind:'Looking for a collaborator'},
+  {id:2,uid:'priya',t:'5 hours ago',ts:5,cat:'Creative',tags:['UI/UX','Figma','CSS'],likes:28,comments:[],
+   body:'Designed wireframes and interactive UI mockups for our smart campus navigation app. Would love feedback from fellow frontend developers on component structure!',kind:'Feedback wanted'},
+  {id:3,uid:'ananya',t:'Yesterday',ts:26,cat:'Micro-Gigs',tags:['Arduino','IoT','Python'],likes:9,comments:[],
+   body:'Need a quick hand writing a Python script to log sensor readings from my Arduino weather station. Happy to pay in chai ☕ or trade an Arduino crash course!',kind:'Micro-gig · skill swap'},
+  {id:4,uid:'sid',t:'Yesterday',ts:30,cat:'Academic',tags:['Distributed Systems','DSA','C++'],likes:21,comments:[],
+   body:'Starting a weekly reading group on distributed systems (Raft, consensus, MapReduce). Beginner friendly — I\'ll bring the DSA basics, bring your curiosity.',kind:'Study group'},
+  {id:5,uid:'kabir',t:'2 days ago',ts:50,cat:'Fitness',tags:['Yoga','Calisthenics','JavaScript'],likes:33,comments:[],
+   body:'Running a 6 AM yoga + mobility session at the ground this Saturday. Looking for someone to help me build a small booking page in JavaScript — free sessions for life 😄',kind:'Skill swap'}
+];
+const COMMS = [
+  {id:'ai',name:'AI & ML Study Circle',ab:'#AI',members:128,desc:'Weekly discussions, paper breakdowns, and Kaggle team matchmaking.',kw:'neural networks machine learning ai',cat:'Academic',joined:false,active:19},
+  {id:'fe',name:'Frontend Developers Hub',ab:'#FE',members:94,desc:'Showcase UI components, debug CSS, and build hackathon UIs together.',kw:'react web ui css javascript',cat:'Creative',joined:false,active:11},
+  {id:'wd',name:'Web-Dev-Guild',ab:'#WD',members:76,desc:'Campus group dedicated to full-stack projects, architecture design, and REST APIs.',kw:'web full stack rest api flask',cat:'Academic',joined:true,active:14},
+  {id:'hs',name:'Hackathon-Squads',ab:'#HS',members:152,desc:'Form multi-disciplinary teams for upcoming college and regional hackathons.',kw:'hackathon team',cat:'Academic',joined:true,active:23},
+  {id:'fit',name:'Sunrise Fitness Club',ab:'#FC',members:61,desc:'Morning workouts, yoga flows and accountability buddies.',kw:'fitness yoga gym',cat:'Fitness',joined:false,active:8},
+  {id:'gig',name:'Campus Gigs Board',ab:'#MG',members:203,desc:'Paid micro-gigs: tutoring, design, photography, tech help — all verified students.',kw:'gigs freelance paid',cat:'Micro-Gigs',joined:false,active:27}
+];
+const EVENTS = [
+  {id:1,title:'Hackathon Kick-off & Team Mixer',day:18,mon:'OCT',time:'5:00 PM',loc:'Innovation Lab, Block C',host:'Hackathon-Squads',cat:'Academic',desc:'Pitch your idea in 60 seconds and find teammates with the skills you need.',going:64,att:['rohan','priya','sid'],state:null,tags:['Teams','Pitching']},
+  {id:2,title:'Intro to Machine Learning Workshop',day:21,mon:'OCT',time:'3:30 PM',loc:'Seminar Hall 2',host:'AI & ML Study Circle',cat:'Academic',desc:'Hands-on session: train your first model with PyTorch. Laptops recommended.',going:48,att:['rohan','ananya','kabir'],state:null,tags:['PyTorch','Hands-on']},
+  {id:3,title:'Sunrise Yoga & Mobility',day:24,mon:'OCT',time:'6:00 AM',loc:'Main Ground',host:'Sunrise Fitness Club',cat:'Fitness',desc:'45-minute beginner-friendly flow followed by a healthy breakfast meetup.',going:27,att:['kabir','priya'],state:null,tags:['Wellness']},
+  {id:4,title:'Figma → Frontend Design Jam',day:28,mon:'OCT',time:'4:00 PM',loc:'Design Studio',host:'Frontend Developers Hub',cat:'Creative',desc:'Turn Figma mockups into live components in 2 hours. Pair up designer + developer.',going:39,att:['priya','sid','ananya'],state:null,tags:['Figma','CSS']},
+  {id:5,title:'Campus Micro-Gig Fair',day:2,mon:'NOV',time:'11:00 AM',loc:'Central Quad',host:'Campus Gigs Board',cat:'Micro-Gigs',desc:'Meet students posting paid gigs — tutoring, design, photography and more.',going:91,att:['ananya','rohan','kabir'],state:null,tags:['Paid','Networking']}
+];
+let REQS = [
+  {id:1,dir:'in',uid:'rohan',project:'NLP Mini-Project',msg:'Need a Flask/JS dev to build a demo frontend for our model. I can teach you PyTorch in return.',state:'pending'},
+  {id:2,dir:'in',uid:'priya',project:'Smart Campus Navigation App',msg:'Your JavaScript skills would be perfect for the interactive map layer!',state:'pending'}
+];
+const CHATS = [
+  {id:'c1',uid:'rohan',pinned:true,unread:2,msgs:[
+    {f:'them',t:'Hey, are you free to discuss the Flask API integration for the ML project?',time:'10:12 AM'},
+    {f:'me',t:'Yes! I have standard schema templates ready. Let\'s sync today.',time:'10:14 AM',st:'read'},
+    {f:'them',t:'Perfect 🙌 I\'ll push the model checkpoint to the repo.',time:'10:20 AM'},
+    {f:'them',t:'Also — want to collaborate on the demo for the hackathon?',time:'10:21 AM'}]},
+  {id:'c2',uid:'priya',pinned:true,unread:0,msgs:[
+    {f:'them',t:'I checked your UI draft!',time:'Yesterday'},
+    {f:'me',t:'Thanks! Any feedback on the layout?',time:'Yesterday',st:'read'},
+    {f:'them',t:'Spacing is great. Try a stronger colour contrast on the CTA.',time:'Yesterday'}]},
+  {id:'c3',uid:'sid',pinned:false,unread:0,msgs:[
+    {f:'them',t:'Saw your post about the reading group — count me in!',time:'Mon'},
+    {f:'me',t:'Awesome, first session Thursday 6 PM.',time:'Mon',st:'delivered'}]},
+  {id:'g1',group:true,name:'Hackathon Squad 🚀',members:['rohan','priya','ananya'],pinned:false,unread:5,msgs:[
+    {f:'them',u:'ananya',t:'Idea: a campus-wide lost & found with image matching?',time:'9:02 AM'},
+    {f:'them',u:'priya',t:'Love it. I can mock the UI tonight.',time:'9:06 AM'},
+    {f:'them',u:'rohan',t:'I\'ll handle the matching model. Need an API though 👀',time:'9:10 AM'}]}
+];
+const REPLIES = ['Sounds good! 👍','Let me check my schedule and get back to you.','Nice, that works for me 🙌','Can you share the repo link?','Haha yes, exactly what I was thinking.','Let\'s do a quick call tonight?','Awesome — I\'ll send the notes over.'];
+const QUICK = ['Let\'s sync today 📅','Can you share the repo?','Thanks, that helps! 🙏','Free for a quick call?'];
+const EMOJIS = ['😀','😂','😍','🤝','🔥','🎉','👍','🙏','💡','🚀','✅','📚','💻','☕','⭐','👀'];
+const ACHV = [
+  {em:'🚀',n:'First Swap',d:'Completed a skill swap',ok:true},
+  {em:'🤝',n:'Team Player',d:'Accepted 1 collab',ok:false,id:'collab'},
+  {em:'🎟️',n:'Event Goer',d:'RSVP to an event',ok:false,id:'event'},
+  {em:'⭐',n:'Trusted Peer',d:'Trust score ≥ 4.5',ok:true},
+  {em:'🔥',n:'Streak x7',d:'7 days active',ok:false},
+  {em:'🎓',n:'Mentor',d:'Teach 10 peers',ok:false}
+];
+
+/* ---------- state ---------- */
+const S = {feed:'foryou',composeCat:'Academic',searchCat:'All',searchMode:'profiles',eventFilter:'all',reqTab:'in',
+  chat:'c1',chatTab:'all',chatQ:'',typing:{},myPosts:0,sentCollab:new Set(),outReqs:[],commOpen:{}};
+
+/* ---------- matching engine (client-side mirror of the dual-tag query) ---------- */
+const wantSet = () => me.wants.map(lc);
+function overlap(tags){ const w=wantSet(); return tags.filter(t=>w.some(x=>lc(t).includes(x)||x.includes(lc(t)))); }
+function postScore(p){
+  const o=overlap(p.tags); const u=USERS[p.uid];
+  const theyWant = u ? u.wants.filter(w=>me.skills.some(s=>lc(s.n).includes(lc(w))||lc(w).includes(lc(s.n)))) : [];
+  let s = 40 + o.length*22 + theyWant.length*14 + (u?u.trust-4:0)*6 - Math.min(p.ts||0,60)*.08;
+  return {score:Math.max(35,Math.min(99,Math.round(s))), o, theyWant};
+}
+function userMatch(uid){
+  const u=USERS[uid]; const iOffer=u.wants.filter(w=>me.skills.some(s=>lc(s.n).includes(lc(w))||lc(w).includes(lc(s.n))));
+  const theyOffer=u.skills.filter(s=>wantSet().some(w=>lc(s.n).includes(w)||w.includes(lc(s.n))));
+  const score=Math.min(98,Math.round(42+iOffer.length*20+theyOffer.length*24+(u.trust-4)*8));
+  return {score,iOffer,theyOffer};
+}
+const badge = s => `<span class="skill-badge lvl-${s.lvl}" title="${s.lvl} level"><span class="medal">${s.lvl[0]}</span>${esc(s.n)}</span>`;
+const avatar = (uid,cls='') => { const u=USERS[uid]; return `<div class="avatar ${cls} ${u.av}">${initials(u.name)}${cls==='xs'?'':`<span class="presence ${u.online?'on':''}"></span>`}</div>`; };
+
+/* ---------- AUTH ---------- */
+const eduOk = e => /@[^\s@]+\.(edu|edu\.[a-z]{2}|ac\.[a-z]{2})$/i.test(e.trim());
+$('#loginForm').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const name=$('#fullName').value.trim(), email=$('#campusEmail').value.trim();
+  const hint=$('#emailHint');
+  if(!name){ $('#fullName').focus(); return; }
+  if(!eduOk(email)){ hint.textContent='Please use your institutional .edu / .ac.in email'; hint.classList.add('err'); $('#campusEmail').focus(); return; }
+  // API: POST /api/register { name, email, department }
+  me.name=name; me.email=email; me.dept=$('#department').value;
+  $('#auth-view').classList.add('hidden'); $('#dashboard-view').classList.remove('hidden');
+  initDashboard();
+});
+$('#campusEmail').addEventListener('input',()=>{const h=$('#emailHint');h.classList.remove('err');h.textContent='Must end with .edu or .edu.in / .ac.in';});
+$('#logoutBtn').addEventListener('click',()=>{ $('#dashboard-view').classList.add('hidden'); $('#auth-view').classList.remove('hidden'); $('#notifPop').classList.add('hidden'); window.scrollTo(0,0); });
+/* landing: smooth anchors + reveal on scroll */
+$$('[data-scroll]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); const t=$(a.getAttribute('href')); if(t) t.scrollIntoView({behavior:'smooth'}); if(a.getAttribute('href')==='#join') setTimeout(()=>$('#fullName').focus({preventScroll:true}),700); }));
+const io=('IntersectionObserver' in window)?new IntersectionObserver(es=>es.forEach(x=>{ if(x.isIntersecting){ x.target.classList.add('in'); io.unobserve(x.target);} }),{threshold:.15}):null;
+$$('.reveal').forEach(el=>io?io.observe(el):el.classList.add('in'));
+
+/* ---------- THEME ---------- */
+function setTheme(t){ document.documentElement.dataset.theme=t; $('#themeToggle').innerHTML=ic(t==='dark'?'sun':'moon'); try{localStorage.setItem('cc-theme',t)}catch(e){} }
+$('#themeToggle').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
+
+/* ---------- NAV ---------- */
+function movePill(){ const a=$('.tab-btn.active'); const pill=$('#navPill'); if(!a||getComputedStyle($('#navTabs')).position==='fixed'){pill.style.width='0';return;} pill.style.width=a.offsetWidth+'px'; pill.style.transform=`translateX(${a.offsetLeft}px)`; }
+function goTab(id){
+  $$('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
+  $$('.tab-pane').forEach(p=>p.classList.toggle('active',p.id===id));
+  movePill(); window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='messages-tab') renderChat();
+  if(id==='profile-tab') requestAnimationFrame(renderProfile);
+}
+$$('.tab-btn').forEach(b=>b.addEventListener('click',()=>goTab(b.dataset.tab)));
+document.addEventListener('click',e=>{
+  const l=e.target.closest('[data-tab-link]'); if(l){ goTab(l.dataset.tabLink); if(l.dataset.after==='communities') setSearchMode('communities'); }
+  if(!e.target.closest('#notifPop')&&!e.target.closest('#bellBtn')) $('#notifPop').classList.add('hidden');
+  if(!e.target.closest('.popover')&&!e.target.closest('[data-pop]')) $$('.popover').forEach(p=>p.remove());
+});
+window.addEventListener('resize',movePill);
+if(document.fonts) document.fonts.ready.then(movePill);
+
+/* ---------- NOTIFICATIONS ---------- */
+function pendingIn(){ return REQS.filter(r=>r.dir==='in'&&r.state==='pending'); }
+function updateBadges(){
+  const n=pendingIn().length; const b=$('#bellCnt'); b.textContent=n; b.classList.toggle('hidden',!n);
+  const u=CHATS.reduce((a,c)=>a+c.unread,0); const m=$('#msgCnt'); m.textContent=u; m.classList.toggle('hidden',!u);
+  $('#reqCount').textContent=`${n} pending`;
+  renderGreeting();
+}
+$('#bellBtn').addEventListener('click',e=>{ e.stopPropagation(); const p=$('#notifPop'); p.classList.toggle('hidden'); if(!p.classList.contains('hidden')) renderNotifs(); });
+function renderNotifs(){
+  const pend=pendingIn();
+  $('#notifPop').innerHTML=`<div class="section-h"><h4>Notifications</h4></div>`+
+    (pend.map(r=>{const u=USERS[r.uid];return `<div class="notif">${avatar(r.uid,'xs')}<div><b>${esc(u.name)}</b> wants to collaborate on <b>${esc(r.project)}</b><div class="actions"><button class="btn btn-mint btn-sm" data-act="accept" data-id="${r.id}">Accept</button><button class="btn btn-ghost btn-sm" data-act="decline" data-id="${r.id}">Decline</button></div></div></div>`}).join('')||'')+
+    `<div class="notif"><div class="avatar xs av-2">${ic('calendar')}</div><div>Reminder: <b>Hackathon Kick-off</b> is on 18 Oct. RSVP so your squad can plan.</div></div>
+     <div class="notif"><div class="avatar xs av-3">${ic('star')}</div><div>Priya rated your last swap <span class="stars">★★★★★</span></div></div>`;
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  const r=REQS.find(x=>x.id==b.dataset.id); if(!r) return;
+  r.state=b.dataset.act==='accept'?'accepted':'declined';
+  if(r.state==='accepted'){ me.conn++; ACHV.find(a=>a.id==='collab').ok=true; toast(`You're now collaborating with ${USERS[r.uid].name.split(' ')[0]} 🎉`); }
+  else toast('Request declined');
+  updateBadges(); renderNotifs(); renderProfile(); renderStats();
+});
+
+/* ---------- FEED ---------- */
+function chipRow(el,list,active,cb,withAll=true){
+  const items=withAll?['All',...list]:list;
+  el.innerHTML=items.map(c=>`<button class="chip ${c===active?'active':''}" data-v="${c}">${CAT_EMOJI[c]||''} ${c}</button>`).join('');
+  $$('.chip',el).forEach(b=>b.addEventListener('click',()=>cb(b.dataset.v)));
+}
+function renderFeedChrome(){
+  chipRow($('#composeCats'),CATS,S.composeCat,v=>{S.composeCat=v;renderFeedChrome()},false);
+  const tabs=[['foryou','✨ For you'],['latest','Latest'],...CATS.map(c=>[c,`${CAT_EMOJI[c]} ${c}`])];
+  $('#feedCats').innerHTML=tabs.map(([k,l])=>`<button class="chip ${k===S.feed?'active':''}" data-feed="${k}">${l}</button>`).join('');
+}
+$('#feedCats').addEventListener('click',e=>{ const b=e.target.closest('[data-feed]'); if(!b) return; S.feed=b.dataset.feed; renderFeedChrome(); renderFeed(); });
+const composer=$('#composer');
+composer.addEventListener('focusin',()=>composer.classList.add('open'));
+composer.addEventListener('focusout',e=>{ if(!composer.contains(e.relatedTarget)&&!$('#postInput').value.trim()) composer.classList.remove('open'); });
+function renderFeed(){
+  let list=POSTS.map(p=>({p,m:postScore(p)}));
+  if(!['foryou','latest'].includes(S.feed)) list=list.filter(x=>x.p.cat===S.feed);
+  list.sort((a,b)=>S.feed==='latest'?(a.p.ts-b.p.ts):(b.m.score-a.m.score));
+  $('#postsList').innerHTML=list.map(({p,m},i)=>postHTML(p,m,i)).join('')||'<div class="card empty">No posts here yet. Be the first to share something!</div>';
+  hydrateIcons($('#postsList'));
+}
+function postHTML(p,m,i){
+  const isMe=p.uid==='me'; const u=isMe?{name:me.name,dept:me.dept,av:'av-1'}:USERS[p.uid];
+  const why=m.o.length?`<div class="why">${ic('spark')} Because you want to learn <b>${esc(m.o[0])}</b></div>`:
+     (m.theyWant.length?`<div class="why">${ic('swap')} They want <b>${esc(m.theyWant[0])}</b>, which you offer</div>`:'');
+  const done=S.sentCollab.has(p.id);
+  return `<article class="card post-card" style="animation-delay:${i*50}ms" data-post="${p.id}">
+    <div class="post-header">
+      <div class="avatar ${u.av}">${initials(u.name)}</div>
+      <div><div class="post-author">${esc(u.name)} <span class="vcheck" title="Verified student">✓</span></div>
+        <div class="post-time">${esc(u.dept)} · ${p.t}</div></div>
+      ${isMe?'':`<span class="match-pill">${m.score}% match</span>`}
+    </div>
+    <div class="post-body">${esc(p.body)}</div>
+    <div class="post-tags"><span class="tag mint">${CAT_EMOJI[p.cat]} ${p.cat}</span>${p.tags.slice(0,3).map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div>
+    ${why}
+    <div class="post-actions">
+      <button class="action-btn like-btn ${p.liked?'liked':''}" data-like="${p.id}">${ic('heart')} <span>${p.likes}</span></button>
+      <button class="action-btn" data-cmt="${p.id}">${ic('comment')} ${p.comments.length||'Comment'}</button>
+      ${isMe?'':`<button class="action-btn collab ${done?'sent':''}" data-collab="${p.id}">${done?ic('check')+' Request sent':ic('users')+' Collaborate'}</button>`}
+    </div>
+    <div class="comments hidden" id="cm-${p.id}">${p.comments.map(c=>commentHTML(c)).join('')}
+      <div class="comment-input"><input placeholder="Write a comment…" data-cin="${p.id}" /><button class="btn btn-primary btn-sm" data-csend="${p.id}">${ic('send')}</button></div>
+    </div>
+  </article>`;
+}
+const commentHTML = c => { const u=c.uid==='me'?{name:me.name,av:'av-1'}:USERS[c.uid]; return `<div class="comment"><div class="avatar xs ${u.av}">${initials(u.name)}</div><div class="bubble"><b>${esc(u.name.split(' ')[0])}</b> ${esc(c.text)}</div></div>`; };
+$('#postsList').addEventListener('click',e=>{
+  const like=e.target.closest('[data-like]'), cmt=e.target.closest('[data-cmt]'), col=e.target.closest('[data-collab]'), swp=e.target.closest('[data-swap]'), cs=e.target.closest('[data-csend]');
+  if(like){ const p=POSTS.find(x=>x.id==like.dataset.like); p.liked=!p.liked; p.likes+=p.liked?1:-1; like.classList.toggle('liked',p.liked); $('span',like).textContent=p.likes; }
+  if(cmt){ $('#cm-'+cmt.dataset.cmt).classList.toggle('hidden'); }
+  if(col){ const p=POSTS.find(x=>x.id==col.dataset.collab); if(!S.sentCollab.has(p.id)) openCollabModal(p.uid,p); }
+  if(swp){ openCollabModal(swp.dataset.swap,null,true); }
+  if(cs){ const id=cs.dataset.csend, inp=$(`[data-cin="${id}"]`); if(inp.value.trim()){ const p=POSTS.find(x=>x.id==id); const c={uid:'me',text:inp.value.trim()}; p.comments.push(c); inp.parentElement.insertAdjacentHTML('beforebegin',commentHTML(c)); inp.value=''; } }
+});
+$('#postsList').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.dataset.cin) $(`[data-csend="${e.target.dataset.cin}"]`).click(); });
+$('#submitPostBtn').addEventListener('click',()=>{
+  const v=$('#postInput').value.trim(); if(!v){ $('#postInput').focus(); return; }
+  const tags=[...new Set((v.match(/#(\w+)/g)||[]).map(t=>t.slice(1)))];
+  // API: POST /api/posts { body, category, tags }
+  POSTS.unshift({id:Date.now(),uid:'me',t:'Just now',ts:0,cat:S.composeCat,tags:tags.length?tags:[S.composeCat],likes:0,comments:[],body:v.replace(/#(\w+)/g,'$1'),kind:null});
+  $('#postInput').value=''; composer.classList.remove('open'); S.feed='foryou'; renderFeedChrome(); S.myPosts++; renderFeed(); toast('Posted to your campus feed');
+});
+
+function renderTrends(){
+  const counts={}; POSTS.forEach(p=>p.tags.forEach(t=>counts[t]=(counts[t]||0)+1));
+  const top=Object.entries(counts).sort((a,b)=>(overlap([b[0]]).length-overlap([a[0]]).length)||b[1]-a[1]||a[0].localeCompare(b[0])).slice(0,8);
+  $('#trendList').innerHTML=top.map(([t])=>`<span class="tag ${overlap([t]).length?'mint':''}">#${esc(t)}</span>`).join('');
+}
+function renderSuggest(){
+  const list=Object.keys(USERS).map(id=>({id,m:userMatch(id)})).sort((a,b)=>b.m.score-a.m.score);
+  $('#suggestList').innerHTML=list.map(({id,m})=>{const u=USERS[id];const line=m.theyOffer.length?'Can teach you '+esc(m.theyOffer[0].n):esc(u.skills[0].n)+' · '+esc(u.dept);
+    return `<div class="card rail-card"><div class="rail-ring" style="--p:${m.score}"><div class="avatar ${u.av}">${initials(u.name)}</div></div>
+    <span class="rail-pct">${m.score}% match</span><b>${esc(u.name.split(' ')[0])}</b><small>${line}</small>
+    <button class="btn btn-outline btn-sm" data-collab-user="${id}">Connect</button></div>`}).join('');
+}
+$('#suggestList').addEventListener('click',e=>{const b=e.target.closest('[data-collab-user]'); if(b) openCollabModal(b.dataset.collabUser);});
+function renderMiniEvents(){
+  $('#miniEvents').innerHTML=EVENTS.slice(0,3).map(ev=>`<div class="ev-mini"><div class="date-block"><b>${ev.day}</b><span>${ev.mon}</span></div><div><b>${esc(ev.title)}</b><small>${ev.time} · ${ev.state?`<b style="display:inline;color:var(--mint-600)">${ev.state==='going'?'✓ Going':ev.state==='interested'?'★ Interested':'Not going'}</b>`:'RSVP open'}</small></div></div>`).join('');
+  renderGreeting();
+}
+function renderGreeting(){
+  if(!$('#greetName')) return;
+  const h=new Date().getHours(), first=me.name.split(' ')[0];
+  const top=Object.keys(USERS).map(id=>({id,m:userMatch(id)})).sort((a,b)=>b.m.score-a.m.score)[0];
+  const n=pendingIn().length, ev=EVENTS.find(e=>e.state!=='declined');
+  $('#greetHi').textContent=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  $('#greetName').textContent=`Welcome back, ${first}`;
+  $('#greetSub').textContent=`${USERS[top.id].name.split(' ')[0]} is a ${top.m.score}% match for what you want to learn. Say hi, or pick up where you left off.`;
+  $('#greetReq').textContent=n?`Review ${n} collab request${n>1?'s':''}`:'View collab requests';
+  $('#greetEv').textContent=ev?`${ev.day} ${ev.mon} · ${ev.title}`:'Browse events';
+}
+function renderStats(){
+  const ids={mConn:me.conn,mSwaps:me.swaps,pConn:me.conn,pSwaps:me.swaps};
+  Object.entries(ids).forEach(([k,v])=>{const el=$('#'+k); if(el) el.textContent=v;});
+  $('#pEvents').textContent=EVENTS.filter(e=>e.state==='going').length;
+}
+
+/* ---------- COLLAB MODAL ---------- */
+function openCollabModal(uid,post,isSwap){
+  const u=USERS[uid]; const m=userMatch(uid);
+  const back=document.createElement('div'); back.className='modal-back';
+  back.innerHTML=`<div class="modal" role="dialog" aria-modal="true">
+    <div class="entity-header" style="margin-bottom:16px">${avatar(uid)}<div><h3>${isSwap?'Propose a skill swap':'Collaboration request'}</h3><p class="muted" style="font-size:.85rem">to ${esc(u.name)} · ${m.score}% match</p></div></div>
+    <div class="form-group"><label>Project / topic</label><input class="field" id="cmProj" value="${esc(post?post.tags[0]+' project':isSwap?'Skill swap':'')}" placeholder="e.g. Hackathon demo" /></div>
+    <div class="form-group"><label>I can offer</label><div class="tag-row" id="cmOffer">${me.skills.map((s,i)=>`<button type="button" class="chip ${i===0?'active':''}" data-s="${esc(s.n)}">${esc(s.n)}</button>`).join('')}</div></div>
+    <div class="form-group"><label>Message</label><textarea class="field" id="cmMsg" placeholder="Say hi and describe what you'd like to build…">Hi ${esc(u.name.split(' ')[0])}! I'd love to team up — I can help with ${esc(me.skills[0].n)}.</textarea></div>
+    <div class="btn-row"><button class="btn btn-ghost" data-close>Cancel</button><button class="btn btn-primary" id="cmSend">${ic('send')} Send request</button></div></div>`;
+  document.body.appendChild(back); $('#cmProj').focus();
+  const close=()=>back.remove();
+  back.addEventListener('click',e=>{ if(e.target===back||e.target.closest('[data-close]')) close(); });
+  $$('#cmOffer .chip',back).forEach(c=>c.addEventListener('click',()=>{c.classList.toggle('active')}));
+  document.addEventListener('keydown',function k(e){ if(e.key==='Escape'){close();document.removeEventListener('keydown',k);} });
+  $('#cmSend',back).addEventListener('click',()=>{
+    // API: POST /api/collab-requests { to, project, offer, message }
+    S.outReqs.push({id:Date.now(),dir:'out',uid,project:$('#cmProj',back).value||'Collaboration',msg:$('#cmMsg',back).value,state:'pending'});
+    if(post) S.sentCollab.add(post.id);
+    close(); renderFeed(); renderProfile(); toast(`Request sent to ${u.name.split(' ')[0]}`);
+    setTimeout(()=>{ const r=S.outReqs.find(x=>x.uid===uid&&x.state==='pending'); if(r){ r.state='accepted'; renderProfile(); toast(`${u.name.split(' ')[0]} accepted your request 🎉`); } },9000);
+  });
+}
+
+/* ---------- SEARCH ---------- */
+function setSearchMode(m){ S.searchMode=m; $$('#searchFilter button').forEach(b=>b.classList.toggle('active',b.dataset.f===m)); $('#profileResults').classList.toggle('hidden',m!=='profiles'); $('#communityResults').classList.toggle('hidden',m!=='communities'); renderSearch(); }
+$('#searchFilter').addEventListener('click',e=>{const b=e.target.closest('button'); if(b) setSearchMode(b.dataset.f);});
+$('#globalSearchInput').addEventListener('input',renderSearch);
+function renderSearch(){
+  const q=lc($('#globalSearchInput').value.trim());
+  chipRow($('#searchCats'),CATS,S.searchCat,v=>{S.searchCat=v;renderSearch()});
+  const pr=Object.entries(USERS).filter(([id,u])=>(S.searchCat==='All'||u.cat===S.searchCat)&&(!q||lc(u.name+' '+u.dept+' '+u.skills.map(s=>s.n).join(' ')).includes(q)))
+    .map(([id,u])=>({id,u,m:userMatch(id)})).sort((a,b)=>b.m.score-a.m.score);
+  $('#profileResults').innerHTML=pr.map(({id,u,m},i)=>`<div class="card entity-card" style="animation-delay:${i*50}ms">
+    <div class="entity-header">${avatar(id)}<div style="flex:1"><h4>${esc(u.name)}</h4><p class="entity-sub">${esc(u.dept)} • ${u.year}</p></div><span class="match-pill">${m.score}%</span></div>
+    <div class="stars">${stars(u.trust)} <span class="muted" style="font-size:.75rem;font-weight:600">${u.trust} (${u.reviews} reviews)</span></div>
+    <div class="tag-row">${u.skills.map(badge).join('')}</div>
+    <div><div class="muted" style="font-size:.74rem;font-weight:700;margin-bottom:6px">WANTS TO LEARN</div><div class="tag-row">${u.wants.map(w=>`<span class="tag want">${esc(w)}</span>`).join('')}</div></div>
+    <div class="entity-foot"><button class="btn btn-outline btn-sm" data-msg="${id}">${ic('chat')} Message</button><button class="btn btn-primary btn-sm" data-collab-user="${id}">${ic('users')} Collaborate</button></div></div>`).join('')||'<div class="empty">No profiles match your search.</div>';
+  const cm=COMMS.filter(c=>(S.searchCat==='All'||c.cat===S.searchCat)&&(!q||lc(c.name+' '+c.desc+' '+c.kw).includes(q)));
+  $('#communityResults').innerHTML=cm.map((c,i)=>commHTML(c,i,false)).join('')||'<div class="empty">No communities match your search.</div>';
+}
+function commHTML(c,i,mine){
+  return `<div class="card entity-card" style="animation-delay:${i*50}ms">
+    <div class="entity-header"><div class="avatar av-${(i%5)+1}">${c.ab}</div><div><h4>${esc(c.name)}</h4><p class="entity-sub">${mine?`Active discussions: ${c.active}`:c.members+(c.joined?1:0)+' Members'} • ${c.cat}</p></div></div>
+    <p class="entity-desc">${esc(c.desc)}</p>
+    <div class="entity-foot">${mine?`<button class="btn btn-primary btn-sm" data-hub="${c.id}">Open Hub</button><button class="btn btn-ghost btn-sm" data-join="${c.id}">Leave</button>`:
+      `<button class="btn ${c.joined?'btn-mint':'btn-outline'} btn-sm" data-join="${c.id}">${c.joined?ic('check')+' Joined':'Join Community'}</button>`}</div></div>`;
+}
+document.addEventListener('click',e=>{
+  const j=e.target.closest('[data-join]'); if(j){ const c=COMMS.find(x=>x.id===j.dataset.join); c.joined=!c.joined; toast(c.joined?`Joined ${c.name}`:`Left ${c.name}`); renderSearch(); renderMyComms(); }
+  const h=e.target.closest('[data-hub]'); if(h){ const c=COMMS.find(x=>x.id===h.dataset.hub); toast(`Opening ${c.name}…`); }
+  const m=e.target.closest('[data-msg]'); if(m) openChatWith(m.dataset.msg);
+  const cu=e.target.closest('#profileResults [data-collab-user]'); if(cu) openCollabModal(cu.dataset.collabUser);
+});
+function renderMyComms(){
+  const mine=COMMS.filter(c=>c.joined);
+  $('#myCommunities').innerHTML=mine.map((c,i)=>commHTML(c,i,true)).join('')||'<div class="card empty">You haven\'t joined any hubs yet.</div>';
+}
+
+/* ---------- EVENTS ---------- */
+const RSVP = [['going','✓ Going'],['interested','★ Interested'],['declined','✕ Can\'t go']];
+function renderEvents(){
+  setTimeout(()=>S.evAnim=true,800);
+  let list=EVENTS.filter(e=>S.eventFilter==='all'||e.state===S.eventFilter);
+  $('#eventsGrid').innerHTML=list.map((ev,i)=>{
+    const lbl={going:'✓ You\'re going',interested:'★ Interested',declined:'Not going'}[ev.state]||'RSVP open';
+    const count=ev.going+(ev.state==='going'?1:0);
+    return `<article class="card event-card" style="${S.evAnim?'':`animation:rise .4s ${i*70}ms both`}">
+      <div class="event-top"><span class="rsvp-status ${ev.state||''}">${lbl}</span>
+        <div class="date-block"><b>${ev.day}</b><span>${ev.mon}</span></div>
+        <div><h4>${esc(ev.title)}</h4><div class="event-meta"><span>${ic('clock')}${ev.time}</span><span>${ic('pin')}${esc(ev.loc)}</span></div></div></div>
+      <div class="event-body">
+        <div class="tag-row"><span class="tag mint">${CAT_EMOJI[ev.cat]} ${ev.cat}</span>${ev.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+        <p>${esc(ev.desc)}</p><p style="font-size:.78rem">Hosted by <b>${esc(ev.host)}</b></p>
+        <div class="attendees">${ev.att.map(a=>avatar(a,'xs')).join('')}<span>${count} going</span></div>
+        <div class="rsvp-row">${RSVP.map(([k,l])=>`<button class="rsvp-btn ${ev.state===k?'on-'+k:''}" data-rsvp="${ev.id}" data-k="${k}">${l}</button>`).join('')}</div>
+      </div></article>`;
+  }).join('')||'<div class="card empty">Nothing here yet — RSVP to an event and it will show up.</div>';
+}
+$('#eventsGrid').addEventListener('click',e=>{
+  const b=e.target.closest('[data-rsvp]'); if(!b) return;
+  const ev=EVENTS.find(x=>x.id==b.dataset.rsvp); const k=b.dataset.k;
+  ev.state=ev.state===k?null:k;
+  if(ev.state==='going'){ ACHV.find(a=>a.id==='event').ok=true; toast(`You're going to ${ev.title} 🎉`); } else if(ev.state) toast(`Marked as ${ev.state}`);
+  renderEvents(); renderMiniEvents(); renderStats();
+});
+$('#eventFilter').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) return; S.eventFilter=b.dataset.ef; $$('#eventFilter button').forEach(x=>x.classList.toggle('active',x===b)); renderEvents();});
+
+/* ---------- MESSAGES ---------- */
+const chatName = c => c.group?c.name:USERS[c.uid].name;
+const lastMsg = c => c.msgs[c.msgs.length-1];
+function chatAvatar(c,cls='sm'){
+  if(c.group) return `<div class="avatar ${cls} group-av">${c.members.slice(0,4).map(m=>`<i class="${USERS[m].av}"></i>`).join('')}</div>`;
+  return avatar(c.uid,cls);
+}
+function renderChatList(){
+  const q=lc(S.chatQ);
+  let list=CHATS.filter(c=>(!q||lc(chatName(c)+' '+c.msgs.map(m=>m.t).join(' ')).includes(q))&&(S.chatTab==='all'||(S.chatTab==='unread'&&c.unread)||(S.chatTab==='groups'&&c.group)));
+  list.sort((a,b)=>(b.pinned-a.pinned));
+  const row=c=>{const l=lastMsg(c); const typ=S.typing[c.id];
+    return `<div class="chat-item ${c.id===S.chat?'active':''}" data-chat="${c.id}">
+      ${chatAvatar(c)}<div class="meta"><div class="chat-top"><span class="chat-name">${c.pinned?'📌 ':''}${esc(chatName(c))}</span><span class="chat-time">${l.time}</span></div>
+      <div class="chat-bottom"><span class="chat-preview ${typ?'typing':''}">${typ?'typing…':(l.f==='me'?'You: ':(c.group&&l.u?USERS[l.u].name.split(' ')[0]+': ':''))+esc(l.t)}</span>${c.unread?`<span class="unread">${c.unread}</span>`:''}</div></div></div>`;};
+  const pins=list.filter(c=>c.pinned), rest=list.filter(c=>!c.pinned);
+  $('#chatItems').innerHTML=(pins.length?`<div class="chat-label">Pinned</div>`+pins.map(row).join(''):'')+(rest.length?`<div class="chat-label">Recent</div>`+rest.map(row).join(''):'')||'<div class="empty" style="padding:30px">No conversations found.</div>';
+  hydrateIcons($('#chatItems'));
+}
+const tickHTML = st => st?`<span class="tick ${st==='read'?'read':''}">${st==='sent'?'✓':'✓✓'}</span>`:'';
+function msgHTML(m,c,idx){
+  const sent=m.f==='me'; const u=!sent&&(c.group?USERS[m.u]:USERS[c.uid]);
+  const body=m.card?`<div class="session-card"><b>📅 Study session proposed</b><span>${esc(m.card)}</span><button class="btn btn-mint btn-sm" data-accept-sess>${ic('check')} Add to calendar</button></div>`:`<div class="msg">${esc(m.t)}</div>`;
+  return `<div class="msg-row ${sent?'sent':'received'}" data-i="${idx}">
+    ${sent?'':`<div class="avatar xs ${u.av}">${initials(u.name)}</div>`}
+    <div class="react-bar">${['👍','❤️','😂','🔥','🙌'].map(e=>`<button data-react="${e}">${e}</button>`).join('')}</div>
+    <div class="msg-col">${c.group&&!sent?`<span class="msg-meta"><b>${esc(u.name.split(' ')[0])}</b></span>`:''}${body}
+      ${m.r&&m.r.length?`<div class="reactions">${m.r.map(r=>`<span>${r}</span>`).join('')}</div>`:''}
+      <div class="msg-meta">${m.time} ${sent?tickHTML(m.st):''}</div></div></div>`;
+}
+function renderChat(keepScroll){
+  renderChatList();
+  const c=CHATS.find(x=>x.id===S.chat); const w=$('#chatWindow');
+  const u=c.group?null:USERS[c.uid];
+  const online=c.group||u.online;
+  const status=S.typing[c.id]?'typing…':c.group?`${c.members.length+1} members`:(online?'Online now':'Last seen 2h ago');
+  w.innerHTML=`<div class="chat-header"><button class="btn-icon back" id="chatBack" aria-label="Back">${ic('back')}</button>${chatAvatar(c)}
+      <div><h4>${esc(chatName(c))}</h4><div class="status ${online?'':'off'}">${online?'<span style="width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block"></span>':''}${status}</div></div>
+      <div class="tools"><button class="btn-icon" title="Voice call" id="callBtn">${ic('phone')}</button><button class="btn-icon" title="Video call" id="vidBtn">${ic('video')}</button></div></div>
+    <div class="chat-messages" id="chatMsgs"><div class="day-divider">Today</div>
+      ${c.msgs.map((m,i)=>msgHTML(m,c,i)).join('')}
+      ${S.typing[c.id]?`<div class="typing-row">${c.group?'':`<div class="avatar xs ${u.av}">${initials(u.name)}</div>`}<div class="typing-bubble"><i></i><i></i><i></i></div></div>`:''}</div>
+    <div class="composer">
+      <div class="quick-replies">${QUICK.map(q=>`<button data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>
+      <div class="input-shell">
+        <button class="tool" data-pop="attach" title="Attach" aria-label="Attach">${ic('plus')}</button>
+        <textarea id="chatInput" rows="1" placeholder="Message ${esc(chatName(c).split(' ')[0])}…"></textarea>
+        <button class="tool" data-pop="emoji" title="Emoji" aria-label="Emoji">${ic('smile')}</button>
+        <button class="send-btn is-empty" id="sendBtn" aria-label="Send">${ic('mic')}</button>
+      </div></div>`;
+  const box=$('#chatMsgs'); box.style.scrollBehavior='auto'; box.scrollTop=box.scrollHeight; box.style.scrollBehavior='';
+  if(c.unread){ c.unread=0; updateBadges(); renderChatList(); }
+  bindComposer();
+}
+function bindComposer(){
+  const inp=$('#chatInput'), btn=$('#sendBtn');
+  const sync=()=>{ inp.style.height='auto'; inp.style.height=Math.min(inp.scrollHeight,120)+'px'; const has=inp.value.trim().length>0; btn.classList.toggle('is-empty',!has); btn.innerHTML=ic(has?'send':'mic'); };
+  inp.addEventListener('input',sync);
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMsg(inp.value); } });
+  btn.addEventListener('click',()=>{ if(inp.value.trim()) sendMsg(inp.value); else toast('Voice notes coming soon 🎙️'); });
+  $$('.quick-replies button').forEach(b=>b.addEventListener('click',()=>sendMsg(b.dataset.q)));
+  $$('[data-pop]').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const had=$('.popover'); $$('.popover').forEach(p=>p.remove()); if(had&&had.dataset.k===b.dataset.pop) return; openPopover(b.dataset.pop); }));
+  $('#chatBack').addEventListener('click',()=>$('#msgLayout').classList.remove('chat-open'));
+  $('#callBtn').addEventListener('click',()=>toast('Calling… (demo)')); $('#vidBtn').addEventListener('click',()=>toast('Starting video call… (demo)'));
+  $('#chatMsgs').addEventListener('click',e=>{
+    const r=e.target.closest('[data-react]'); if(r){ const row=r.closest('.msg-row'); const c=CHATS.find(x=>x.id===S.chat); const m=c.msgs[row.dataset.i]; m.r=m.r||[]; const i=m.r.indexOf(r.dataset.react); i>-1?m.r.splice(i,1):m.r.push(r.dataset.react); renderChat(); }
+    if(e.target.closest('[data-accept-sess]')) toast('Added to your calendar 📅');
+  });
+}
+function openPopover(kind){
+  const shell=$('.composer'); const p=document.createElement('div'); p.className='popover '+kind; p.dataset.k=kind;
+  if(kind==='emoji'){ p.innerHTML=EMOJIS.map(e=>`<button>${e}</button>`).join(''); p.style.left='auto'; p.style.right='18px'; p.addEventListener('click',e=>{ const b=e.target.closest('button'); if(b){ const i=$('#chatInput'); i.value+=b.textContent; i.dispatchEvent(new Event('input')); i.focus(); } }); }
+  else { p.innerHTML=`<button data-a="sess"><span class="ico">${ic('calendar')}</span>Schedule study session</button><button data-a="swap"><span class="ico">${ic('swap')}</span>Propose skill swap</button><button data-a="file"><span class="ico">${ic('paperclip')}</span>Share a file</button>`;
+    p.addEventListener('click',e=>{ const b=e.target.closest('[data-a]'); if(!b) return; p.remove();
+      if(b.dataset.a==='sess') sendMsg('',{card:'Tomorrow · 6:00 PM · Library, Room 3'});
+      if(b.dataset.a==='swap') sendMsg(`🔄 Skill swap proposal: I'll teach ${me.skills[0].n}, you teach ${me.wants[0]}?`);
+      if(b.dataset.a==='file') toast('File sharing coming soon 📎'); }); }
+  shell.appendChild(p);
+}
+function sendMsg(text,extra){
+  text=(text||'').trim(); if(!text&&!extra) return;
+  const c=CHATS.find(x=>x.id===S.chat);
+  const m={f:'me',t:text,time:nowT(),st:'sent',...(extra||{})}; c.msgs.push(m);
+  renderChat(); $('#sendBtn').classList.add('fly');
+  setTimeout(()=>{ m.st='delivered'; if(S.chat===c.id) refreshTicks(c); },700);
+  setTimeout(()=>{ m.st='read'; if(S.chat===c.id) refreshTicks(c); },1600);
+  S.typing[c.id]=true; setTimeout(()=>{ renderChatList(); if(S.chat===c.id) renderChat(); },900);
+  setTimeout(()=>{
+    S.typing[c.id]=false;
+    const who=c.group?c.members[Math.floor(Math.random()*c.members.length)]:null;
+    c.msgs.push({f:'them',u:who,t:REPLIES[Math.floor(Math.random()*REPLIES.length)],time:nowT()});
+    if(S.chat!==c.id||!$('#messages-tab').classList.contains('active')){ c.unread++; updateBadges(); }
+    if(S.chat===c.id) renderChat(); else renderChatList();
+  },2300+Math.random()*1200);
+}
+function refreshTicks(c){ const rows=$$('#chatMsgs .msg-row.sent'); const sentMsgs=c.msgs.filter(m=>m.f==='me'); rows.forEach((r,i)=>{ const t=$('.msg-meta',r); const m=sentMsgs[i]; if(t&&m) t.innerHTML=`${m.time} ${tickHTML(m.st)}`; }); }
+function openChatWith(uid){
+  let c=CHATS.find(x=>x.uid===uid);
+  if(!c){ c={id:'c-'+uid,uid,pinned:false,unread:0,msgs:[{f:'them',t:`Hi! Thanks for connecting 👋`,time:nowT()}]}; CHATS.push(c); }
+  S.chat=c.id; goTab('messages-tab'); $('#msgLayout').classList.add('chat-open');
+}
+$('#chatItems').addEventListener('click',e=>{ const it=e.target.closest('[data-chat]'); if(!it) return; S.chat=it.dataset.chat; renderChat(); $('#msgLayout').classList.add('chat-open'); });
+$('#chatSearch').addEventListener('input',e=>{S.chatQ=e.target.value;renderChatList();});
+$('#chatTabs').addEventListener('click',e=>{const b=e.target.closest('[data-ct]'); if(!b) return; S.chatTab=b.dataset.ct; $$('#chatTabs .chip').forEach(x=>x.classList.toggle('active',x===b)); renderChatList();});
+$('#newChatBtn').addEventListener('click',()=>{ const next=Object.keys(USERS).find(id=>!CHATS.some(c=>c.uid===id)); if(next) openChatWith(next); else toast('You already have chats with everyone 😄'); });
+
+/* ambient "alive" behaviour: a peer occasionally pings you */
+let pingTimer;
+function schedulePing(){ clearTimeout(pingTimer); pingTimer=setTimeout(()=>{
+  if($('#dashboard-view').classList.contains('hidden')) return schedulePing();
+  const c=CHATS.filter(x=>!x.group)[Math.floor(Math.random()*3)]; const lines=['Did you see the new event? 👀','Pushed the latest commit!','Can you review my PR when free?','Free for a quick sync?'];
+  c.msgs.push({f:'them',t:lines[Math.floor(Math.random()*lines.length)],time:nowT()});
+  if(!(S.chat===c.id&&$('#messages-tab').classList.contains('active'))){ c.unread++; toast(`New message from ${USERS[c.uid].name.split(' ')[0]}`); }
+  updateBadges(); if($('#messages-tab').classList.contains('active')) renderChat(); else renderChatList(); schedulePing();
+},45000+Math.random()*30000); }
+
+/* ---------- PROFILE ---------- */
+function renderProfile(){
+  const ini=initials(me.name);
+  ['profileAvatar','navAvatar','cmpAvatar'].forEach(i=>$('#'+i).textContent=ini);
+  $('#profileNameDisplay').textContent=me.name; $('#profileDeptDisplay').textContent=me.dept+(me.email?' • '+me.email:'');
+  $('#navName').textContent=me.name.split(' ')[0];
+  $('#mySkillBadges').innerHTML=me.skills.map(badge).join('');
+  $('#skillMeter').innerHTML=me.skills.map(s=>`<div class="skill-line"><span>${esc(s.n)}</span><div class="bar"><i style="width:0" data-w="${s.pct}"></i></div><span class="muted" style="font-size:.78rem">${s.lvl} · ${s.pct}%</span></div>`).join('');
+  requestAnimationFrame(()=>$$('#skillMeter .bar i').forEach(i=>i.style.width=i.dataset.w+'%'));
+  $('#myWants').innerHTML=me.wants.map((w,i)=>`<span class="tag want">${esc(w)}<button data-rmwant="${i}" aria-label="Remove">×</button></span>`).join('');
+  $('#achvGrid').innerHTML=ACHV.map(a=>`<div class="achv ${a.ok?'':'locked'}" style="background:rgba(255,255,255,.08)"><span class="em">${a.em}</span><b>${a.n}</b><small style="color:#aeb7e6">${a.d}</small></div>`).join('');
+  const all=[...REQS,...S.outReqs].filter(r=>r.dir===S.reqTab);
+  $('#reqList').innerHTML=all.map(r=>{const u=USERS[r.uid];return `<div class="req-card"><div class="top">${avatar(r.uid,'sm')}<div style="flex:1"><b>${esc(u.name)}</b><div class="muted" style="font-size:.78rem">${esc(r.project)}</div></div><span class="state-pill ${r.state}">${r.state}</span></div>
+    <p>${esc(r.msg)}</p>${r.dir==='in'&&r.state==='pending'?`<div class="actions"><button class="btn btn-mint btn-sm" data-act="accept" data-id="${r.id}">Accept</button><button class="btn btn-ghost btn-sm" data-act="decline" data-id="${r.id}">Decline</button><button class="btn btn-outline btn-sm" data-msg="${r.uid}">Message</button></div>`:''}</div>`}).join('')||`<p class="muted" style="padding:20px 0;text-align:center;font-size:.9rem">${S.reqTab==='in'?'No requests yet.':'You haven\'t sent any requests. Tap Collaborate on a post or profile!'}</p>`;
+  hydrateIcons($('#profile-tab')); updateBadges();
+}
+$('#reqTabs').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) return; S.reqTab=b.dataset.rt; $$('#reqTabs button').forEach(x=>x.classList.toggle('active',x===b)); renderProfile();});
+function addSkill(kind){
+  const inp=$(kind==='skill'?'#addSkillInput':'#addWantInput'); const v=inp.value.trim(); if(!v) return;
+  if(kind==='skill') me.skills.push({n:v,lvl:'Bronze',pct:30}); else me.wants.push(v);
+  inp.value=''; renderProfile(); renderFeed(); renderSuggest(); renderTrends();
+  toast(kind==='skill'?`Added “${v}” — earn endorsements to level up`:`Feed personalised for “${v}”`);
+}
+$('#addSkillBtn').addEventListener('click',()=>addSkill('skill')); $('#addWantBtn').addEventListener('click',()=>addSkill('want'));
+$('#addSkillInput').addEventListener('keydown',e=>{if(e.key==='Enter')addSkill('skill')}); $('#addWantInput').addEventListener('keydown',e=>{if(e.key==='Enter')addSkill('want')});
+$('#myWants').addEventListener('click',e=>{const b=e.target.closest('[data-rmwant]'); if(!b) return; me.wants.splice(+b.dataset.rmwant,1); renderProfile(); renderFeed(); renderSuggest(); renderTrends();});
+
+/* ---------- INIT ---------- */
+function initDashboard(){
+  $('#msgLayout').classList.remove('chat-open');
+  renderFeedChrome(); renderFeed(); renderTrends(); renderSuggest(); renderMiniEvents();
+  renderSearch(); renderMyComms(); renderEvents(); renderChatList(); renderProfile(); renderStats(); updateBadges();
+  hydrateIcons(); goTab('feed-tab'); window.scrollTo(0,0); schedulePing();
+  setTimeout(()=>toast(`Welcome, ${me.name.split(' ')[0]}! You have ${pendingIn().length} collab requests`),600);
+}
+hydrateIcons();
+try{ const t=localStorage.getItem('cc-theme'); setTheme(t==='dark'?'dark':'light'); }catch(e){ setTheme('light'); }
+</script>
 </body>
 </html>
