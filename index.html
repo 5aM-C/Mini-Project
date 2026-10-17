@@ -1,314 +1,272 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CampusConnect | Student Hub</title>
-  <link rel="stylesheet" href="rubric_2.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect - Ecosystem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030712;
+            color: #f9fafb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-y: auto;
+            padding: 2.5rem 1.5rem;
+        }
+        .ambient-glow {
+            position: fixed;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, rgba(14, 116, 144, 0.03) 50%, transparent 70%);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 0; pointer-events: none; filter: blur(60px);
+        }
+        .page-view { display: none; position: relative; z-index: 1; width: 100%; max-width: 480px; }
+        .page-view.active { display: block; }
+        
+        .landing-container { text-align: center; max-width: 800px; }
+        .project-name {
+            font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; letter-spacing: -0.025em; margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .tagline { font-size: clamp(1.1rem, 2vw, 1.35rem); font-weight: 300; color: #94a3b8; margin-bottom: 2.5rem; line-height: 1.6; }
+        .cta-button {
+            display: inline-block; background: #ffffff; color: #0b0f19; font-weight: 600; font-size: 1rem;
+            padding: 0.85rem 2.25rem; border-radius: 9999px; text-decoration: none; cursor: pointer; transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1); border: none;
+        }
+        .cta-button:hover { background: #e2e8f0; transform: translateY(-2px); }
+
+        .auth-container, .profile-container {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px; backdrop-filter: blur(16px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+            padding: 2.5rem; margin: auto; width: 100%;
+        }
+        .brand-title {
+            text-align: center; font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff 20%, #93c5fd 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block;
+        }
+        .brand-subtitle { text-align: center; font-size: 0.9rem; color: #9ca3af; margin-bottom: 2rem; }
+        .tab-switcher { display: flex; background: rgba(31, 41, 55, 0.6); border-radius: 12px; padding: 4px; margin-bottom: 2rem; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .tab-btn { flex: 1; background: transparent; border: none; color: #9ca3af; font-family: inherit; font-weight: 600; font-size: 0.9rem; padding: 0.75rem; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+        .tab-btn.active { background: #38bdf8; color: #030712; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3); }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 500; color: #d1d5db; margin-bottom: 0.5rem; }
+        .form-input { width: 100%; background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 0.85rem 1rem; color: #f9fafb; font-family: inherit; font-size: 0.95rem; }
+        .form-input:focus { outline: none; border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15); background: rgba(31, 41, 55, 0.8); }
+        .hint-text { font-size: 0.75rem; color: #6b7280; margin-top: 0.35rem; }
+        .submit-btn { width: 100%; background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color: #ffffff; font-family: inherit; font-weight: 600; font-size: 1rem; padding: 0.9rem; border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.4); margin-top: 0.5rem; }
+        .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 15px 30px -5px rgba(56, 189, 248, 0.6); }
+        .form-container { display: none; }
+        .form-container.active { display: block; }
+        .avatar-upload-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem; }
+        .avatar-preview { width: 90px; height: 90px; border-radius: 50%; background: rgba(31, 41, 55, 0.8); border: 2px dashed rgba(255, 255, 255, 0.2); display: flex; justify-content: center; align-items: center; overflow: hidden; margin-bottom: 0.75rem; position: relative; cursor: pointer; }
+        .avatar-preview img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .avatar-placeholder-text { font-size: 0.75rem; color: #9ca3af; text-align: center; padding: 0 10px; }
+        .file-input-label { font-size: 0.85rem; color: #38bdf8; cursor: pointer; font-weight: 600; }
+        #profile-pic { display: none; }
+    </style>
 </head>
 <body>
+    <div class="ambient-glow"></div>
 
-  <!-- AUTH SCREEN -->
-  <div id="auth-view" class="auth-wrapper">
-    <div class="card auth-card">
-      <h1 class="brand-title">CampusConnect</h1>
-      <p class="brand-subtitle">Verified Campus Skill Exchange & Community</p>
-      
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="fullName">Full Name</label>
-          <input type="text" id="fullName" placeholder="e.g. Alex Sharma" required />
+    <div id="view-landing" class="page-view active">
+        <div class="landing-container" style="margin: 0 auto;">
+            <h1 class="project-name">CampusConnect</h1>
+            <p class="tagline">The peer-to-peer ecosystem where verified campus talent meets collaborative learning.</p>
+            <button class="cta-button" onclick="goToAuth()">Sign In / Sign Up</button>
         </div>
-        <div class="form-group">
-          <label for="campusEmail">Institutional Email</label>
-          <input type="email" id="campusEmail" placeholder="student@college.edu" required />
-        </div>
-        <div class="form-group">
-          <label for="department">Department</label>
-          <select id="department" required>
-            <option value="Computer Science">Computer Science & Eng</option>
-            <option value="Information Tech">Information Technology</option>
-            <option value="Electronics">Electronics & Telecom</option>
-            <option value="Mechanical">Mechanical Engineering</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Verify & Enter</button>
-      </form>
     </div>
-  </div>
 
-  <!-- DASHBOARD SCREEN -->
-  <div id="dashboard-view">
-    <!-- Navbar -->
-    <header class="top-nav">
-      <div class="nav-brand">CampusConnect</div>
-      
-      <nav class="nav-tabs">
-        <button class="tab-btn active" data-tab="feed-tab">Feed</button>
-        <button class="tab-btn" data-tab="search-tab">Search</button>
-        <button class="tab-btn" data-tab="communities-tab">Communities</button>
-        <button class="tab-btn" data-tab="messages-tab">Messages</button>
-        <button class="tab-btn" data-tab="profile-tab">Profile</button>
-      </nav>
+    <div id="view-auth" class="page-view">
+        <div class="auth-container">
+            <span class="brand-title">CampusConnect</span>
+            <p class="brand-subtitle">Verified campus peer network</p>
 
-      <div class="nav-actions">
-        <button id="themeToggle" class="btn-icon" title="Toggle Theme">🌓</button>
-        <button id="logoutBtn" class="btn-text">Logout</button>
-      </div>
-    </header>
-
-    <main class="content-container">
-      
-      <!-- TAB 1: SOCIAL FEED (INSTAGRAM STYLE) -->
-      <section id="feed-tab" class="tab-pane active">
-        <div class="feed-layout">
-          <div class="feed-stream">
-            
-            <!-- Create Post Box -->
-            <div class="card post-creator">
-              <textarea id="postInput" placeholder="Share a project update, question, or skill request..."></textarea>
-              <div class="post-creator-footer">
-                <button id="submitPostBtn" class="btn btn-primary btn-sm">Post</button>
-              </div>
+            <div class="tab-switcher">
+                <button class="tab-btn active" id="signin-tab" type="button" onclick="switchTab('signin')">Sign In</button>
+                <button class="tab-btn" id="signup-tab" type="button" onclick="switchTab('signup')">Sign Up</button>
             </div>
 
-            <!-- Posts List -->
-            <div id="postsList">
-              <article class="card post-card">
-                <div class="post-header">
-                  <div class="avatar">RM</div>
-                  <div>
-                    <div class="post-author">Rohan Mehta <span class="badge">Verified</span></div>
-                    <div class="post-time">2 hours ago • Computer Science</div>
-                  </div>
+            <div id="signin-form" class="form-container active">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="signin-username" class="form-input" placeholder="Enter your username" required>
                 </div>
-                <div class="post-body">
-                  Just finished setting up our PyTorch training pipeline for our NLP mini-project! Looking for someone who can help with building a Flask backend API to serve the model. Drop a message or swap request!
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="signin-password" class="form-input" placeholder="••••••••" required>
                 </div>
-                <div class="post-actions">
-                  <button class="action-btn like-btn">❤️ <span>14</span></button>
-                  <button class="action-btn">💬 Comment</button>
-                  <button class="action-btn">🔄 Swap Skill</button>
+                <button type="button" class="submit-btn" onclick="handleSignIn()">Sign In</button>
+            </div>
+
+            <div id="signup-form" class="form-container">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="signup-username" class="form-input" placeholder="Choose a username" required>
                 </div>
-              </article>
-
-              <article class="card post-card">
-                <div class="post-header">
-                  <div class="avatar">PP</div>
-                  <div>
-                    <div class="post-author">Priya Patil <span class="badge">Verified</span></div>
-                    <div class="post-time">5 hours ago • Information Tech</div>
-                  </div>
+                <div class="form-group">
+                    <label class="form-label">PRN (Permanent Registration Number)</label>
+                    <input type="text" id="prn-input" class="form-input" placeholder="e.g. 2526ucs011" required>
+                    <p class="hint-text">Format required: 4 numbers, 3 letters, 3 numbers (NNNNAAANNN)</p>
                 </div>
-                <div class="post-body">
-                  Designed wireframes and interactive UI mockups for our smart campus navigation app. Would love feedback from fellow frontend developers on component structure!
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="signup-password" class="form-input" placeholder="Create a password" required>
+                    <p class="hint-text">Min 8 chars, must include letters & numbers.</p>
                 </div>
-                <div class="post-actions">
-                  <button class="action-btn like-btn">❤️ <span>28</span></button>
-                  <button class="action-btn">💬 Comment</button>
-                  <button class="action-btn">🔄 Swap Skill</button>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" id="signup-confirm" class="form-input" placeholder="Confirm your password" required>
                 </div>
-              </article>
+                <button type="button" class="submit-btn" onclick="handleSignUp()">Create Account</button>
             </div>
-          </div>
         </div>
-      </section>
+    </div>
 
-      <!-- TAB 2: SEARCH & DISCOVERY -->
-      <section id="search-tab" class="tab-pane">
-        <div class="card search-control-card">
-          <div class="search-input-wrapper">
-            <input type="text" id="globalSearchInput" placeholder="Search for people or communities..." />
-          </div>
-          <div class="filter-toggle-group">
-            <label class="filter-radio">
-              <input type="radio" name="searchFilter" value="profiles" checked />
-              <span>Individual Profiles</span>
-            </label>
-            <label class="filter-radio">
-              <input type="radio" name="searchFilter" value="communities" />
-              <span>Communities</span>
-            </label>
-          </div>
+    <div id="view-profile-setup" class="page-view">
+        <div class="profile-container">
+            <h1 class="brand-title" style="font-size: 1.5rem;">Set Up Your Profile</h1>
+            <p class="brand-subtitle">Configure your skills for the matchmaking engine</p>
+
+            <div class="avatar-upload-container">
+                <div class="avatar-preview" onclick="document.getElementById('profile-pic').click()">
+                    <span id="placeholder-text" class="avatar-placeholder-text">Add Photo</span>
+                    <img id="preview-img" src="" alt="Profile Preview">
+                </div>
+                <label for="profile-pic" class="file-input-label">Upload Profile Picture</label>
+                <input type="file" id="profile-pic" accept="image/*" onchange="previewImage(event)">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">My Expertise (What I Offer)</label>
+                <input type="text" id="setup-expertise" class="form-input" placeholder="e.g. Python, UI Design, C++" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">What I'm Interested In (What I Want to Learn)</label>
+                <input type="text" id="setup-interests" class="form-input" placeholder="e.g. Machine Learning, Public Speaking" required>
+            </div>
+
+            <button type="button" class="submit-btn" onclick="handleProfileSetup()">Enter Campus Ecosystem</button>
         </div>
+    </div>
 
-        <!-- Profiles Search Results -->
-        <div id="profileResults" class="results-grid">
-          <div class="card entity-card" data-name="rohan mehta" data-dept="computer science" data-skill="pytorch python">
-            <div class="entity-header">
-              <div class="avatar">RM</div>
-              <div>
-                <h4>Rohan Mehta</h4>
-                <p class="entity-sub">Computer Science • 3rd Year</p>
-              </div>
-            </div>
-            <div class="tag-row">
-              <span class="tag">Python</span>
-              <span class="tag">PyTorch</span>
-              <span class="tag">ML</span>
-            </div>
-            <button class="btn btn-outline btn-sm">View Profile</button>
-          </div>
+    <script>
+        let uploadedPicData = "";
 
-          <div class="card entity-card" data-name="priya patil" data-dept="information tech" data-skill="figma ui ux">
-            <div class="entity-header">
-              <div class="avatar">PP</div>
-              <div>
-                <h4>Priya Patil</h4>
-                <p class="entity-sub">Information Tech • 2nd Year</p>
-              </div>
-            </div>
-            <div class="tag-row">
-              <span class="tag">UI/UX</span>
-              <span class="tag">Figma</span>
-              <span class="tag">CSS</span>
-            </div>
-            <button class="btn btn-outline btn-sm">View Profile</button>
-          </div>
+        function goToAuth() {
+            document.getElementById('view-landing').classList.remove('active');
+            document.getElementById('view-auth').classList.add('active');
+        }
 
-          <div class="card entity-card" data-name="siddharth joshi" data-dept="computer science" data-skill="c++ dsa">
-            <div class="entity-header">
-              <div class="avatar">SJ</div>
-              <div>
-                <h4>Siddharth Joshi</h4>
-                <p class="entity-sub">Computer Science • 2nd Year</p>
-              </div>
-            </div>
-            <div class="tag-row">
-              <span class="tag">C++</span>
-              <span class="tag">DSA</span>
-              <span class="tag">LeetCode</span>
-            </div>
-            <button class="btn btn-outline btn-sm">View Profile</button>
-          </div>
-        </div>
+        function switchTab(tab) {
+            document.getElementById('signin-tab').classList.toggle('active', tab === 'signin');
+            document.getElementById('signup-tab').classList.toggle('active', tab === 'signup');
+            document.getElementById('signin-form').classList.toggle('active', tab === 'signin');
+            document.getElementById('signup-form').classList.toggle('active', tab === 'signup');
+        }
 
-        <!-- Communities Search Results -->
-        <div id="communityResults" class="results-grid" style="display: none;">
-          <div class="card entity-card" data-name="ai & ml study circle" data-desc="neural networks machine learning">
-            <div class="entity-header">
-              <div class="avatar">#AI</div>
-              <div>
-                <h4>AI & ML Study Circle</h4>
-                <p class="entity-sub">128 Members</p>
-              </div>
-            </div>
-            <p class="entity-desc">Weekly discussions, paper breakdowns, and Kaggle team matchmaking.</p>
-            <button class="btn btn-outline btn-sm">Join Community</button>
-          </div>
+        function handleSignUp() {
+            const username = document.getElementById('signup-username').value.trim();
+            const prn = document.getElementById('prn-input').value.trim();
+            const passwordInput = document.getElementById('signup-password').value;
+            const confirmInput = document.getElementById('signup-confirm').value;
 
-          <div class="card entity-card" data-name="frontend developers hub" data-desc="react web ui css javascript">
-            <div class="entity-header">
-              <div class="avatar">#FE</div>
-              <div>
-                <h4>Frontend Developers Hub</h4>
-                <p class="entity-sub">94 Members</p>
-              </div>
-            </div>
-            <p class="entity-desc">Showcase UI components, debug CSS, and build hackathon UIs together.</p>
-            <button class="btn btn-outline btn-sm">Join Community</button>
-          </div>
-        </div>
-      </section>
+            if (!username || !prn || !passwordInput || !confirmInput) {
+                alert("Please fill in all required fields!");
+                return;
+            }
 
-      <!-- TAB 3: MY COMMUNITIES -->
-      <section id="communities-tab" class="tab-pane">
-        <div class="results-grid">
-          <div class="card entity-card">
-            <div class="entity-header">
-              <div class="avatar">#WD</div>
-              <div>
-                <h4>Web-Dev-Guild</h4>
-                <p class="entity-sub">Active Discussions: 14</p>
-              </div>
-            </div>
-            <p class="entity-desc">Campus group dedicated to full-stack projects, architecture design, and REST APIs.</p>
-            <button class="btn btn-primary btn-sm">Open Hub</button>
-          </div>
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordRegex.test(passwordInput)) {
+                alert("Password must be at least 8 characters long and contain both letters and numbers.");
+                return;
+            }
 
-          <div class="card entity-card">
-            <div class="entity-header">
-              <div class="avatar">#HS</div>
-              <div>
-                <h4>Hackathon-Squads</h4>
-                <p class="entity-sub">Active Discussions: 23</p>
-              </div>
-            </div>
-            <p class="entity-desc">Form multi-disciplinary teams for upcoming college and regional hackathons.</p>
-            <button class="btn btn-primary btn-sm">Open Hub</button>
-          </div>
-        </div>
-      </section>
+            if (passwordInput !== confirmInput) {
+                alert("Passwords do not match!");
+                return;
+            }
 
-      <!-- TAB 4: MESSAGING -->
-      <section id="messages-tab" class="tab-pane">
-        <div class="card messaging-layout">
-          <div class="chat-list">
-            <div class="chat-item active">
-              <div class="avatar sm">RM</div>
-              <div>
-                <div class="chat-name">Rohan Mehta</div>
-                <div class="chat-preview">Hey, want to collaborate on...</div>
-              </div>
-            </div>
-            <div class="chat-item">
-              <div class="avatar sm">PP</div>
-              <div>
-                <div class="chat-name">Priya Patil</div>
-                <div class="chat-preview">I checked your UI draft!</div>
-              </div>
-            </div>
-          </div>
-          <div class="chat-window">
-            <div class="chat-header">Rohan Mehta</div>
-            <div class="chat-messages">
-              <div class="msg received">Hey, are you free to discuss the Flask API integration for the ML project?</div>
-              <div class="msg sent">Yes! I have standard schema templates ready. Let's sync today.</div>
-            </div>
-            <div class="chat-input-row">
-              <input type="text" placeholder="Type a message..." />
-              <button class="btn btn-primary btn-sm">Send</button>
-            </div>
-          </div>
-        </div>
-      </section>
+            let users = JSON.parse(localStorage.getItem('cc_users')) || [];
+            const newUser = {
+                username: username,
+                name: username.charAt(0).toUpperCase() + username.slice(1),
+                prn: prn,
+                password: passwordInput,
+                expertise: "Full-stack & Algorithms",
+                interests: "Cloud Systems",
+                avatarImg: ""
+            };
 
-      <!-- TAB 5: PROFILE -->
-      <section id="profile-tab" class="tab-pane">
-        <div class="card profile-card">
-          <div class="profile-header-main">
-            <div class="avatar lg" id="profileAvatar">ST</div>
-            <div>
-              <h2 id="profileNameDisplay">Student User</h2>
-              <p class="text-muted" id="profileDeptDisplay">Department</p>
-              <span class="badge">● Verified Institutional Account</span>
-            </div>
-          </div>
+            users.push(newUser);
+            localStorage.setItem('cc_users', JSON.stringify(users));
+            localStorage.setItem('cc_current_user', JSON.stringify(newUser));
 
-          <hr class="divider" />
+            document.getElementById('view-auth').classList.remove('active');
+            document.getElementById('view-profile-setup').classList.add('active');
+        }
 
-          <div class="profile-section">
-            <h4>Skills Offered</h4>
-            <div class="tag-row">
-              <span class="tag">HTML & CSS</span>
-              <span class="tag">JavaScript</span>
-              <span class="tag">Python Logic</span>
-            </div>
-          </div>
+        function handleSignIn() {
+            const username = document.getElementById('signin-username').value.trim();
+            const password = document.getElementById('signin-password').value;
 
-          <div class="profile-section">
-            <h4>Skills Desired</h4>
-            <div class="tag-row">
-              <span class="tag">Machine Learning</span>
-              <span class="tag">Distributed Systems</span>
-            </div>
-          </div>
-        </div>
-      </section>
+            if (!username || !password) {
+                alert("Please enter both username and password!");
+                return;
+            }
 
-    </main>
-  </div>
+            let users = JSON.parse(localStorage.getItem('cc_users')) || [];
+            let foundUser = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
 
-  <script src="rubric_2.js"></script>
+            if (!foundUser && (username.toLowerCase() === 'gargi' || username.toLowerCase() === 'admin')) {
+                foundUser = { username: username, name: "Gargi Devlekar", expertise: "Python, Web Dev, Next.js", interests: "Machine Learning, Public Speaking", avatarImg: "" };
+            }
+
+            if (!foundUser) {
+                alert("User does not exist or incorrect password!");
+                return;
+            }
+
+            localStorage.setItem('cc_current_user', JSON.stringify(foundUser));
+            window.location.href = "dashboard.html";
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedPicData = e.target.result;
+                    const previewImg = document.getElementById('preview-img');
+                    const placeholderText = document.getElementById('placeholder-text');
+                    previewImg.src = uploadedPicData;
+                    previewImg.style.display = 'block';
+                    placeholderText.style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleProfileSetup() {
+            let currentUser = JSON.parse(localStorage.getItem('cc_current_user')) || { name: "New User" };
+            currentUser.expertise = document.getElementById('setup-expertise').value;
+            currentUser.interests = document.getElementById('setup-interests').value;
+            if (uploadedPicData) currentUser.avatarImg = uploadedPicData;
+
+            localStorage.setItem('cc_current_user', JSON.stringify(currentUser));
+            window.location.href = "dashboard.html";
+        }
+    </script>
 </body>
 </html>

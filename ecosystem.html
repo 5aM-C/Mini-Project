@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect - Ecosystem Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030712; color: #f9fafb; min-height: 100vh; display: flex; flex-direction: column; }
+        .ambient-glow { position: fixed; width: 700px; height: 700px; background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(14, 116, 144, 0.02) 50%, transparent 70%); top: 20%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; filter: blur(80px); }
+        nav { position: relative; z-index: 100; background: rgba(17, 24, 39, 0.85); border-bottom: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px); display: flex; justify-content: space-between; align-items: center; padding: 1rem 2.5rem; flex-shrink: 0; }
+        .nav-brand { font-size: 1.25rem; font-weight: 800; background: linear-gradient(135deg, #ffffff 20%, #93c5fd 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: #9ca3af; text-decoration: none; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: color 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: #38bdf8; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .nav-avatar { width: 36px; height: 36px; border-radius: 50%; background: #38bdf8; color: #030712; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 2px solid rgba(56, 189, 248, 0.4); overflow: hidden; }
+        .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .ecosystem-section { display: none; flex: 1; position: relative; z-index: 1; }
+        .ecosystem-section.active { display: flex; flex-direction: column; }
+
+        /* Messaging */
+        .chat-layout { flex: 1; max-width: 1300px; width: 100%; margin: 0 auto; display: grid; grid-template-columns: 340px 1fr; gap: 1.5rem; padding: 1.5rem; overflow: hidden; height: calc(100vh - 80px); }
+        .chat-sidebar { background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; backdrop-filter: blur(12px); display: flex; flex-direction: column; overflow: hidden; }
+        .sidebar-header { padding: 1.25rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .conversations-list { flex: 1; overflow-y: auto; list-style: none; }
+        .conversation-item { display: flex; align-items: center; gap: 0.85rem; padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255, 255, 255, 0.03); cursor: pointer; transition: background 0.2s; }
+        .conversation-item:hover, .conversation-item.active { background: rgba(56, 189, 248, 0.1); }
+        .conv-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #ffffff; flex-shrink: 0; position: relative; }
+        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background-color: #10b981; border: 2px solid #030712; border-radius: 50%; }
+        .conv-info { flex: 1; min-width: 0; }
+        .chat-window { background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; backdrop-filter: blur(12px); display: flex; flex-direction: column; overflow: hidden; }
+        .chat-header { padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 1rem; background: rgba(17, 24, 39, 0.4); }
+        .chat-messages { flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+        .message { max-width: 65%; padding: 0.85rem 1.15rem; border-radius: 14px; font-size: 0.9rem; line-height: 1.4; }
+        .message.received { background: rgba(31, 41, 55, 0.7); color: #f9fafb; align-self: flex-start; }
+        .message.sent { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color: #ffffff; align-self: flex-end; }
+        .chat-input-area { padding: 1.25rem 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; gap: 0.75rem; }
+        .chat-input { flex: 1; background: rgba(31, 41, 55, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 0.75rem 1rem; color: #f9fafb; outline: none; }
+        .send-btn { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color: #ffffff; border: none; padding: 0 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; }
+
+        /* Search */
+        .search-container { max-width: 800px; width: 100%; margin: 0 auto; padding: 2.5rem 1.5rem; }
+        .search-bar-wrapper { position: relative; margin-bottom: 2.5rem; }
+        .search-input { width: 100%; background: rgba(17, 24, 39, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 1.15rem 1.25rem 1.15rem 3.5rem; color: #f9fafb; font-size: 1.1rem; outline: none; }
+        .results-section { margin-bottom: 2.5rem; }
+        .result-card { background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .result-action-btn { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.2); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; text-decoration: none; cursor: pointer; }
+
+        /* Profile */
+        .profile-layout { max-width: 1100px; width: 100%; margin: 0 auto; padding: 2.5rem 1.5rem; display: grid; grid-template-columns: 350px 1fr; gap: 2rem; }
+        .profile-card { background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 2rem; height: fit-content; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: #d1d5db; margin-bottom: 0.4rem; }
+        .form-input { width: 100%; background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 0.75rem 1rem; color: #f9fafb; outline: none; }
+        .save-btn { width: 100%; background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color: #ffffff; padding: 0.8rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .logout-btn { width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 0.8rem; border-radius: 10px; font-weight: 600; margin-top: 1rem; cursor: pointer; }
+        .section-card { background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 1.75rem; margin-bottom: 1.5rem; }
+
+        /* Modal Popup */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(12px); z-index: 1000; justify-content: center; align-items: center; padding: 1.5rem; }
+        .modal-box { background: rgba(17, 24, 39, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; max-width: 450px; width: 100%; padding: 2rem; position: relative; text-align: center; }
+        .close-modal { position: absolute; top: 1.25rem; right: 1.25rem; background: transparent; border: none; color: #9ca3af; font-size: 1.5rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+
+    <nav>
+        <a href="dashboard.html" class="nav-brand">CampusConnect</a>
+        <ul class="nav-links">
+            <li><a href="dashboard.html">Home</a></li>
+            <li><a id="nav-tab-messages" onclick="switchEcosystemTab('messages')">Messages</a></li>
+            <li><a id="nav-tab-search" onclick="switchEcosystemTab('search')">Search</a></li>
+        </ul>
+        <div class="nav-right">
+            <a onclick="switchEcosystemTab('profile')" title="Go to Profile" style="cursor: pointer;">
+                <div class="nav-avatar" id="nav-user-avatar">GD</div>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 1. MESSAGES SECTION -->
+    <div id="section-messages" class="ecosystem-section">
+        <div class="chat-layout">
+            <aside class="chat-sidebar">
+                <div class="sidebar-header"><h2>Direct Messages</h2></div>
+                <ul class="conversations-list" id="conversations-list"></ul>
+            </aside>
+            <main class="chat-window">
+                <div class="chat-header">
+                    <div class="conv-avatar" id="active-chat-avatar" style="width: 38px; height: 38px; font-size: 0.85rem;">TD</div>
+                    <div class="chat-header-info">
+                        <h3 id="active-chat-name">Tanishka Dewan</h3>
+                        <span style="font-size: 0.75rem; color: #10b981;">Active Now</span>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chat-messages-container"></div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="message-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 2. SEARCH SECTION -->
+    <div id="section-search" class="ecosystem-section">
+        <div class="search-container">
+            <div class="search-bar-wrapper">
+                <span style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%);">🔍</span>
+                <input type="text" class="search-input" id="search-query-input" placeholder="Search profiles, joined or unjoined communities..." oninput="performGlobalSearch()" style="padding-left: 3.5rem;">
+            </div>
+            <div class="results-section">
+                <h3 style="color: #93c5fd; margin-bottom: 1rem;">📂 Matching Communities (Hubs)</h3>
+                <div id="search-comm-grid"></div>
+            </div>
+            <div class="results-section">
+                <h3 style="color: #93c5fd; margin-bottom: 1rem;">👤 Matching Profiles</h3>
+                <div id="search-prof-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. PROFILE SECTION -->
+    <div id="section-profile" class="ecosystem-section">
+        <div class="profile-layout">
+            <div class="profile-card">
+                <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem;">Edit Profile</h2>
+                <form onsubmit="savePreferences(event)">
+                    <div class="form-group">
+                        <label class="form-label">My Name</label>
+                        <input type="text" class="form-input" id="profile-name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">My Expertise</label>
+                        <input type="text" class="form-input" id="profile-expertise">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">What I Want to Learn</label>
+                        <input type="text" class="form-input" id="profile-interests">
+                    </div>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+                <button type="button" class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+            <div>
+                <!-- Connections Section -->
+                <div class="section-card">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem;">👥 My Connections</h3>
+                    <div id="profile-connections" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;"></div>
+                </div>
+
+                <!-- Communities Joined Section -->
+                <div class="section-card">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem;">📂 Communities Joined</h3>
+                    <div id="profile-joined-comm"></div>
+                </div>
+
+                <!-- My Posts Section -->
+                <div class="section-card">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem;">📝 Posts Done By Me</h3>
+                    <div id="profile-my-posts"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Popup Modal -->
+    <div id="profile-popup-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="close-modal" onclick="document.getElementById('profile-popup-modal').style.display='none'">&times;</button>
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: #fff; margin: 0 auto 1rem auto;" id="popup-avatar">TD</div>
+            <h2 id="popup-name" style="font-size: 1.25rem; margin-bottom: 0.2rem;">Tanishka Dewan</h2>
+            <p id="popup-username" style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 1.25rem;">@tanishka</p>
+            
+            <div style="text-align: left; background: rgba(31,41,55,0.4); padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; font-size: 0.9rem;">
+                <p style="margin-bottom: 0.5rem;"><strong>Expertise Offered:</strong> <span id="popup-expertise" style="color: #38bdf8;">Python, Data Structures</span></p>
+                <p><strong>Learning Interests:</strong> <span id="popup-interests" style="color: #ec4899;">Cloud Architecture</span></p>
+            </div>
+
+            <a href="#" id="popup-connect-btn" class="send-btn" style="display: inline-block; text-decoration: none; padding: 0.75rem 1.5rem;">Direct Message</a>
+        </div>
+    </div>
+
+    <script>
+        let currentActiveChat = "Tanishka Dewan";
+
+        const masterCatalog = [
+            { name: "Coding & Algorithms", code: "CS", desc: "Data structures, competitive programming, hackathon preparation.", members: 340, admins: "Tanishka Dewan", connections: "Atharva Patil" },
+            { name: "UI/UX Design Hub", code: "UI", desc: "Figma workshops, wireframing, and graphic design systems.", members: 215, admins: "Atharva Patil", connections: "Gargi Devlekar" },
+            { name: "Machine Learning Circle", code: "AI", desc: "AI models, computer vision, and neural network research.", members: 410, admins: "Tanishka Dewan", connections: "Rohan Sharma" },
+            { name: "Runners & Fitness", code: "RN", desc: "Campus jogging, marathon training, and wellness groups.", members: 180, admins: "Rohan Sharma", connections: "Atharva Patil" },
+            { name: "Robotics Society", code: "RO", desc: "Autonomous bots, Arduino, and hardware hackathons.", members: 290, admins: "Vikram Malhotra", connections: "Rohan Sharma" },
+            { name: "Campus Gamers", code: "GM", desc: "E-sports tournaments and casual gaming night sessions.", members: 520, admins: "Nikhil Joshi", connections: "Tanishka Dewan" },
+            { name: "Literary & Debate Club", code: "LD", desc: "Public speaking, Model UN, and literary symposiums.", members: 145, admins: "Ananya Iyer", connections: "Gargi Devlekar" }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateNavbarAvatar();
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab') || 'messages';
+            const chatTarget = urlParams.get('chat');
+            if (chatTarget) currentActiveChat = chatTarget;
+            
+            switchEcosystemTab(tab);
+            loadConversations();
+            switchChat(currentActiveChat);
+            loadProfileData();
+            performGlobalSearch();
+        });
+
+        function updateNavbarAvatar() {
+            const currentUser = JSON.parse(localStorage.getItem('cc_current_user')) || { name: "Gargi Devlekar" };
+            const navAvatar = document.getElementById('nav-user-avatar');
+            if (currentUser.avatarImg) {
+                navAvatar.innerHTML = `<img src="${currentUser.avatarImg}" alt="PFP">`;
+            } else {
+                navAvatar.textContent = currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            }
+        }
+
+        function switchEcosystemTab(tabName) {
+            document.querySelectorAll('.ecosystem-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`section-${tabName}`).classList.add('active');
+
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            if(document.getElementById(`nav-tab-${tabName}`)) {
+                document.getElementById(`nav-tab-${tabName}`).classList.add('active');
+            }
+        }
+
+        // Messaging Logic
+        function loadConversations() {
+            let convs = JSON.parse(localStorage.getItem('cc_conversations')) || [
+                { name: "Tanishka Dewan", initials: "TD", gradient: "linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)", time: "10:42 AM", messages: [{ sender: "received", text: "Excited to demo this tomorrow! 🚀" }] },
+                { name: "Atharva Patil", initials: "AP", gradient: "linear-gradient(135deg, #ec4899 0%, #be185d 100%)", time: "Yesterday", messages: [{ sender: "received", text: "Finished designing the asset package." }] }
+            ];
+            const listEl = document.getElementById('conversations-list');
+            listEl.innerHTML = "";
+            convs.forEach(c => {
+                const lastMsg = c.messages.length > 0 ? c.messages[c.messages.length - 1].text : "";
+                listEl.innerHTML += `
+                    <li class="conversation-item ${c.name === currentActiveChat ? 'active' : ''}" onclick="switchChat('${c.name}')">
+                        <div class="conv-avatar" style="background: ${c.gradient}">${c.initials}<div class="status-dot"></div></div>
+                        <div class="conv-info">
+                            <div style="display:flex; justify-content:space-between;"><span style="font-weight:700;">${c.name}</span><span style="font-size:0.75rem; color:#9ca3af;">${c.time}</span></div>
+                            <div style="font-size:0.82rem; color:#9ca3af; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${lastMsg}</div>
+                        </div>
+                    </li>
+                `;
+            });
+        }
+
+        function switchChat(name) {
+            currentActiveChat = name;
+            let convs = JSON.parse(localStorage.getItem('cc_conversations')) || [];
+            let conv = convs.find(c => c.name === name);
+            if (!conv) {
+                conv = { name: name, initials: name.substring(0,2).toUpperCase(), gradient: "linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)", time: "Just now", messages: [{ sender: "received", text: `Connected with ${name}!` }] };
+                convs.push(conv);
+                localStorage.setItem('cc_conversations', JSON.stringify(convs));
+            }
+            document.getElementById('active-chat-name').textContent = conv.name;
+            document.getElementById('active-chat-avatar').textContent = conv.initials;
+            
+            const container = document.getElementById('chat-messages-container');
+            container.innerHTML = "";
+            conv.messages.forEach(m => { container.innerHTML += `<div class="message ${m.sender}">${m.text}</div>`; });
+            container.scrollTop = container.scrollHeight;
+            loadConversations();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            if (!text) return;
+            let convs = JSON.parse(localStorage.getItem('cc_conversations')) || [];
+            let conv = convs.find(c => c.name === currentActiveChat);
+            if (conv) {
+                conv.messages.push({ sender: "sent", text: text });
+                conv.time = "Just now";
+                localStorage.setItem('cc_conversations', JSON.stringify(convs));
+                input.value = "";
+                switchChat(currentActiveChat);
+            }
+        }
+
+        // Search & Profile Popup Logic
+        const mockProfilesDB = {
+            "Tanishka Dewan": { username: "tanishka", expertise: "Python, MySQL, Data Structures", interests: "Machine Learning, Cloud" },
+            "Atharva Patil": { username: "atharva", expertise: "UI Design, Figma, Tailwind CSS", interests: "Graphic Design, Branding" },
+            "Rohan Sharma": { username: "rohan", expertise: "C++, Mechanical CAD, Linux", interests: "Robotics, Embedded Systems" },
+            "Gargi Devlekar": { username: "gargi", expertise: "Python, Web Dev, Next.js", interests: "Machine Learning, Public Speaking" }
+        };
+
+        function performGlobalSearch() {
+            const query = document.getElementById('search-query-input').value.toLowerCase().trim();
+            const commGrid = document.getElementById('search-comm-grid');
+            const profGrid = document.getElementById('search-prof-grid');
+            
+            let users = JSON.parse(localStorage.getItem('cc_users')) || [];
+            let allProfiles = [
+                { name: "Tanishka Dewan", role: "Python & Data Structures", code: "TD" },
+                { name: "Atharva Patil", role: "UI Design & Figma", code: "AP" },
+                { name: "Rohan Sharma", role: "C++ & Systems", code: "RS" }
+            ];
+            users.forEach(u => {
+                if (!allProfiles.some(p => p.name === u.name)) {
+                    allProfiles.push({ name: u.name, role: u.expertise || "Campus Student", code: u.name.substring(0,2).toUpperCase() });
+                }
+            });
+
+            // 1. Render Communities Search
+            commGrid.innerHTML = "";
+            masterCatalog.filter(c => c.name.toLowerCase().includes(query) || c.desc.toLowerCase().includes(query) || query === "").forEach(c => {
+                commGrid.innerHTML += `
+                    <div class="result-card">
+                        <div style="display:flex; align-items:center; gap:1rem;">
+                            <div style="width:40px; height:40px; border-radius:8px; background:rgba(56,189,248,0.2); color:#38bdf8; display:flex; align-items:center; justify-content:center; font-weight:700;">${c.code}</div>
+                            <div><strong>${c.name}</strong><p style="font-size:0.85rem; color:#9ca3af;">${c.desc}</p></div>
+                        </div>
+                        <a href="dashboard.html" class="result-action-btn">Explore Hub</a>
+                    </div>
+                `;
+            });
+
+            // 2. Render Profiles Search
+            profGrid.innerHTML = "";
+            allProfiles.filter(p => p.name.toLowerCase().includes(query) || p.role.toLowerCase().includes(query) || query === "").forEach(p => {
+                profGrid.innerHTML += `
+                    <div class="result-card">
+                        <div style="display:flex; align-items:center; gap:1rem; cursor:pointer;" onclick="openUserProfile('${p.name}')">
+                            <div style="width:40px; height:40px; border-radius:50%; background:#38bdf8; color:#030712; display:flex; align-items:center; justify-content:center; font-weight:700;">${p.code}</div>
+                            <div><strong>${p.name}</strong><p style="font-size:0.85rem; color:#9ca3af;">${p.role}</p></div>
+                        </div>
+                        <button class="result-action-btn" onclick="openUserProfile('${p.name}')">View Profile</button>
+                    </div>
+                `;
+            });
+        }
+
+        function openUserProfile(authorName) {
+            let users = JSON.parse(localStorage.getItem('cc_users')) || [];
+            let found = users.find(u => u.name === authorName) || mockProfilesDB[authorName] || { username: authorName.toLowerCase().replace(/\s/g,''), name: authorName, expertise: "General Tech", interests: "Peer Learning" };
+
+            document.getElementById('popup-name').textContent = authorName;
+            document.getElementById('popup-username').textContent = "@" + (found.username || authorName.toLowerCase());
+            document.getElementById('popup-avatar').textContent = authorName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+            document.getElementById('popup-expertise').textContent = found.expertise || "Not specified";
+            document.getElementById('popup-interests').textContent = found.interests || "Not specified";
+            document.getElementById('popup-connect-btn').href = `ecosystem.html?tab=messages&chat=${encodeURIComponent(authorName)}`;
+
+            document.getElementById('profile-popup-modal').style.display = 'flex';
+        }
+
+        // Profile View Logic
+        function loadProfileData() {
+            const user = JSON.parse(localStorage.getItem('cc_current_user')) || { name: "Gargi Devlekar", expertise: "Python, Web Dev, Next.js", interests: "Machine Learning, Public Speaking" };
+            document.getElementById('profile-name').value = user.name;
+            document.getElementById('profile-expertise').value = user.expertise || "";
+            document.getElementById('profile-interests').value = user.interests || "";
+
+            // 1. Connections Section
+            const connectionsContainer = document.getElementById('profile-connections');
+            connectionsContainer.innerHTML = `
+                <div style="background:rgba(31,41,55,0.4); padding:0.75rem; border-radius:10px; display:flex; align-items:center; gap:0.75rem; cursor:pointer;" onclick="openUserProfile('Tanishka Dewan')">
+                    <div style="width:34px; height:34px; border-radius:50%; background:#38bdf8; color:#030712; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem;">TD</div>
+                    <div><h4 style="font-size:0.85rem;">Tanishka Dewan</h4><p style="font-size:0.7rem; color:#9ca3af;">Python Expert</p></div>
+                </div>
+                <div style="background:rgba(31,41,55,0.4); padding:0.75rem; border-radius:10px; display:flex; align-items:center; gap:0.75rem; cursor:pointer;" onclick="openUserProfile('Atharva Patil')">
+                    <div style="width:34px; height:34px; border-radius:50%; background:#ec4899; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem;">AP</div>
+                    <div><h4 style="font-size:0.85rem;">Atharva Patil</h4><p style="font-size:0.7rem; color:#9ca3af;">UI Designer</p></div>
+                </div>
+            `;
+
+            // 2. Communities Joined Section
+            const joined = JSON.parse(localStorage.getItem('cc_joined_communities')) || [];
+            const commContainer = document.getElementById('profile-joined-comm');
+            commContainer.innerHTML = "";
+            joined.forEach((c, i) => {
+                commContainer.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(31,41,55,0.4); padding:0.75rem; border-radius:8px; margin-bottom:0.5rem;">
+                        <span style="font-weight:600; font-size:0.9rem;">${c.name}</span>
+                        <button onclick="leaveComm(${i})" style="background:rgba(239,68,68,0.2); color:#ef4444; border:none; padding:0.3rem 0.75rem; border-radius:6px; cursor:pointer; font-weight:600; font-size:0.75rem;">Leave</button>
+                    </div>
+                `;
+            });
+
+            // 3. My Posts Section
+            const posts = JSON.parse(localStorage.getItem('cc_posts')) || [];
+            const myPosts = posts.filter(p => p.author === user.name);
+            const postContainer = document.getElementById('profile-my-posts');
+            postContainer.innerHTML = "";
+            if(myPosts.length === 0) {
+                postContainer.innerHTML = `<p style="color:#6b7280; font-size:0.85rem;">No posts published yet.</p>`;
+            } else {
+                myPosts.forEach(p => {
+                    postContainer.innerHTML += `
+                        <div style="background:rgba(31,41,55,0.4); padding:1rem; border-radius:10px; margin-bottom:0.75rem; display:flex; justify-content:space-between; align-items:flex-start;">
+                            <p style="font-size:0.9rem; color:#d1d5db;">${p.content}</p>
+                            <button onclick="deletePost(${p.id})" style="background:transparent; border:none; cursor:pointer; font-size:1rem;" title="Delete Post">🗑️</button>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function savePreferences(e) {
+            e.preventDefault();
+            let user = JSON.parse(localStorage.getItem('cc_current_user')) || {};
+            user.name = document.getElementById('profile-name').value;
+            user.expertise = document.getElementById('profile-expertise').value;
+            user.interests = document.getElementById('profile-interests').value;
+            localStorage.setItem('cc_current_user', JSON.stringify(user));
+
+            let users = JSON.parse(localStorage.getItem('cc_users')) || [];
+            let idx = users.findIndex(u => u.username === user.username);
+            if(idx !== -1) { users[idx] = user; localStorage.setItem('cc_users', JSON.stringify(users)); }
+
+            updateNavbarAvatar();
+            alert("Profile preferences updated successfully!");
+        }
+
+        function leaveComm(i) {
+            let joined = JSON.parse(localStorage.getItem('cc_joined_communities')) || [];
+            joined.splice(i, 1);
+            localStorage.setItem('cc_joined_communities', JSON.stringify(joined));
+            loadProfileData();
+        }
+
+        function deletePost(id) {
+            let posts = JSON.parse(localStorage.getItem('cc_posts')) || [];
+            posts = posts.filter(p => p.id !== id);
+            localStorage.setItem('cc_posts', JSON.stringify(posts));
+            loadProfileData();
+        }
+
+        function handleLogout() {
+            if (confirm("Logout from CampusConnect?")) {
+                localStorage.removeItem('cc_current_user');
+                window.location.href = "index.html";
+            }
+        }
+    </script>
+</body>
+</html>

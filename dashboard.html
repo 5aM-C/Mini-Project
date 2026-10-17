@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect - Dashboard Feed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030712; color: #f9fafb; min-height: 100vh; }
+        .ambient-glow { position: fixed; width: 700px; height: 700px; background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(14, 116, 144, 0.02) 50%, transparent 70%); top: 20%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; filter: blur(80px); }
+        nav { position: sticky; top: 0; z-index: 100; background: rgba(17, 24, 39, 0.85); border-bottom: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px); display: flex; justify-content: space-between; align-items: center; padding: 1rem 2.5rem; }
+        .nav-brand { font-size: 1.25rem; font-weight: 800; background: linear-gradient(135deg, #ffffff 20%, #93c5fd 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: #9ca3af; text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; cursor: pointer; }
+        .nav-links a:hover, .nav-links a.active { color: #38bdf8; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .nav-avatar-link { text-decoration: none; display: flex; align-items: center; transition: transform 0.2s; cursor: pointer; }
+        .nav-avatar { width: 36px; height: 36px; border-radius: 50%; background: #38bdf8; color: #030712; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 2px solid rgba(56, 189, 248, 0.4); overflow: hidden; }
+        .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .main-layout { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 280px 1fr; gap: 2rem; padding: 2rem 1.5rem; }
+        .sidebar { background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.5rem; backdrop-filter: blur(12px); height: fit-content; position: sticky; top: 5rem; }
+        .sidebar h3 { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: #e5e7eb; }
+        .communities-list { list-style: none; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; padding-right: 0.25rem; }
+        .community-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 10px; background: rgba(31, 41, 55, 0.4); transition: background 0.2s; cursor: pointer; text-decoration: none; color: inherit; }
+        .community-item:hover { background: rgba(56, 189, 248, 0.1); }
+        .community-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+        .community-name { font-size: 0.9rem; font-weight: 500; color: #d1d5db; }
+        .feed-container { max-width: 650px; width: 100%; margin: 0 auto; }
+        .feed-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); padding: 0.75rem 1.25rem; border-radius: 14px; backdrop-filter: blur(12px); }
+        .filter-dropdown { background: rgba(31, 41, 55, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); color: #f9fafb; padding: 0.5rem 1rem; border-radius: 8px; font-family: inherit; font-size: 0.9rem; cursor: pointer; outline: none; }
+        .create-post-box { background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.25rem; backdrop-filter: blur(12px); margin-bottom: 1.5rem; }
+        .create-post-input { width: 100%; background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 0.85rem 1rem; color: #f9fafb; font-family: inherit; font-size: 0.95rem; resize: none; margin-bottom: 0.75rem; outline: none; }
+        .create-post-footer { display: flex; justify-content: space-between; align-items: center; }
+        .post-category-select, .post-comm-select { background: rgba(31, 41, 55, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); color: #d1d5db; padding: 0.4rem 0.75rem; border-radius: 6px; font-family: inherit; font-size: 0.85rem; }
+        .post-btn { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); color: #ffffff; font-family: inherit; font-weight: 600; font-size: 0.9rem; padding: 0.5rem 1.25rem; border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.2s; }
+        .post-card { background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; margin-bottom: 1.5rem; backdrop-filter: blur(12px); overflow: hidden; }
+        .post-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; }
+        .post-user-info { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+        .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #ffffff; font-size: 0.9rem; overflow: hidden; }
+        .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .post-author { font-size: 0.95rem; font-weight: 700; color: #f9fafb; }
+        .post-author:hover { color: #38bdf8; text-decoration: underline; }
+        .post-tag { font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.2rem 0.6rem; border-radius: 9999px; }
+        .post-community-badge { display: inline-block; font-size: 0.75rem; color: #93c5fd; background: rgba(147, 197, 253, 0.1); padding: 0.15rem 0.5rem; border-radius: 6px; margin-bottom: 0.5rem; cursor: pointer; }
+        .post-community-badge:hover { background: rgba(147, 197, 253, 0.2); }
+        .post-body { padding: 0 1.25rem 1rem 1.25rem; font-size: 0.95rem; line-height: 1.5; color: #d1d5db; }
+        .post-actions { display: flex; gap: 1.5rem; padding: 0.75rem 1.25rem; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(31, 41, 55, 0.2); }
+        .action-btn { background: transparent; border: none; color: #9ca3af; font-family: inherit; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+        .action-btn:hover, .action-btn.active { color: #38bdf8; }
+        .comments-section { padding: 0.75rem 1.25rem 1rem 1.25rem; border-top: 1px solid rgba(255, 255, 255, 0.03); display: none; background: rgba(11, 15, 25, 0.4); }
+        .comments-section.open { display: block; }
+        .comment-list { margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .comment-item { font-size: 0.85rem; color: #9ca3af; background: rgba(31, 41, 55, 0.4); padding: 0.5rem 0.75rem; border-radius: 8px; }
+        .comment-item strong { color: #e5e7eb; margin-right: 0.4rem; }
+        .comment-input-box { display: flex; gap: 0.5rem; }
+        .comment-input { flex: 1; background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 0.5rem 0.75rem; color: #f9fafb; font-size: 0.85rem; outline: none; }
+        .comment-submit-btn { background: #38bdf8; color: #030712; border: none; padding: 0.5rem 0.75rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(12px); z-index: 1000; justify-content: center; align-items: center; padding: 1.5rem; }
+        .modal-box { background: rgba(17, 24, 39, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; max-width: 650px; width: 100%; padding: 2rem; position: relative; max-height: 85vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 1.25rem; right: 1.25rem; background: transparent; border: none; color: #9ca3af; font-size: 1.5rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+
+    <nav>
+        <a href="dashboard.html" class="nav-brand">CampusConnect</a>
+        <ul class="nav-links">
+            <li><a class="active" onclick="loadPosts()">Home</a></li>
+            <li><a href="ecosystem.html?tab=messages">Messages</a></li>
+            <li><a href="ecosystem.html?tab=search">Search</a></li>
+        </ul>
+        <div class="nav-right">
+            <a href="ecosystem.html?tab=profile" class="nav-avatar-link" title="Go to Profile">
+                <div class="nav-avatar" id="nav-user-avatar">GD</div>
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <h3>Joined Communities</h3>
+            <div class="communities-list" id="joined-communities-sidebar"></div>
+        </aside>
+
+        <main class="feed-container">
+            <div class="feed-controls">
+                <span style="font-weight: 700; font-size: 1rem;">Your Campus Feed</span>
+                <select class="filter-dropdown" id="feed-filter" onchange="loadPosts()">
+                    <option value="all">Filters: All</option>
+                    <option value="technical">Technical</option>
+                    <option value="creative">Creative</option>
+                </select>
+            </div>
+
+            <div class="create-post-box">
+                <textarea class="create-post-input" id="new-post-text" placeholder="Share a project update, ask a question, or post a study resource..."></textarea>
+                <div class="create-post-footer" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <select class="post-comm-select" id="new-post-comm">
+                        <option value="Coding & Algorithms">Coding & Algorithms</option>
+                        <option value="UI/UX Design Hub">UI/UX Design Hub</option>
+                        <option value="Machine Learning Circle">Machine Learning Circle</option>
+                        <option value="Runners & Fitness">Runners & Fitness</option>
+                    </select>
+                    <select class="post-category-select" id="new-post-category">
+                        <option value="technical">Technical</option>
+                        <option value="creative">Creative</option>
+                    </select>
+                    <button class="post-btn" onclick="createNewPost()">Post Update</button>
+                </div>
+            </div>
+
+            <div id="posts-stream"></div>
+        </main>
+    </div>
+
+    <!-- Community Hub Modal Page -->
+    <div id="community-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="close-modal" onclick="closeModal('community-modal')">&times;</button>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="community-icon" id="modal-comm-icon" style="width: 55px; height: 55px; font-size: 1.3rem;">CS</div>
+                <div>
+                    <h2 id="modal-comm-name" style="font-size: 1.4rem;">Coding & Algorithms</h2>
+                    <p style="font-size: 0.85rem; color: #10b981;"><span id="modal-comm-members">340</span> Active Members</p>
+                </div>
+            </div>
+            <p id="modal-comm-desc" style="color: #9ca3af; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;"></p>
+            
+            <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #d1d5db; background: rgba(31,41,55,0.4); padding: 1rem; border-radius: 12px;">
+                <div><strong>Admins:</strong> <span id="modal-comm-admins">Tanishka Dewan</span></div>
+                <div><strong>Connections in Hub:</strong> <span id="modal-comm-connections">Atharva Patil</span></div>
+            </div>
+
+            <button class="post-btn" id="modal-join-btn" onclick="toggleJoinFromModal()" style="margin-bottom: 1.5rem;">Join Hub</button>
+
+            <h3 style="font-size: 1rem; color: #93c5fd; margin-bottom: 0.75rem;">Community Specific Updates</h3>
+            <div id="modal-comm-posts"></div>
+        </div>
+    </div>
+
+    <!-- User Profile Popup Modal -->
+    <div id="profile-popup-modal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 450px; text-align: center;">
+            <button class="close-modal" onclick="closeModal('profile-popup-modal')">&times;</button>
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: #fff; margin: 0 auto 1rem auto;" id="popup-avatar">TD</div>
+            <h2 id="popup-name" style="font-size: 1.25rem; margin-bottom: 0.2rem;">Tanishka Dewan</h2>
+            <p id="popup-username" style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 1.25rem;">@tanishka</p>
+            
+            <div style="text-align: left; background: rgba(31,41,55,0.4); padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; font-size: 0.9rem;">
+                <p style="margin-bottom: 0.5rem;"><strong>Expertise Offered:</strong> <span id="popup-expertise" style="color: #38bdf8;">Python, Data Structures</span></p>
+                <p><strong>Learning Interests:</strong> <span id="popup-interests" style="color: #ec4899;">Cloud Architecture</span></p>
+            </div>
+
+            <a href="#" id="popup-connect-btn" class="post-btn" style="display: inline-block; text-decoration: none;">Direct Message</a>
+        </div>
+    </div>
+
+    <script>
+        let currentCommunityContext = "";
+
+        // Default Master Catalog of All Communities (Joined + Unjoined Recommendations)
+        const masterCommunitiesCatalog = [
+            { name: "Coding & Algorithms", code: "CS", desc: "Data structures, competitive programming, hackathon preparation.", members: 340, admins: "Tanishka Dewan", connections: "Atharva Patil", joined: true },
+            { name: "UI/UX Design Hub", code: "UI", desc: "Figma workshops, wireframing, and graphic design systems.", members: 215, admins: "Atharva Patil", connections: "Gargi Devlekar", joined: true },
+            { name: "Machine Learning Circle", code: "AI", desc: "AI models, computer vision, and neural network research.", members: 410, admins: "Tanishka Dewan", connections: "Rohan Sharma", joined: true },
+            { name: "Runners & Fitness", code: "RN", desc: "Campus jogging, marathon training, and wellness groups.", members: 180, admins: "Rohan Sharma", connections: "Atharva Patil", joined: true },
+            { name: "Robotics Society", code: "RO", desc: "Autonomous bots, Arduino, and hardware hackathons.", members: 290, admins: "Vikram Malhotra", connections: "Rohan Sharma", joined: false },
+            { name: "Campus Gamers", code: "GM", desc: "E-sports tournaments and casual gaming night sessions.", members: 520, admins: "Nikhil Joshi", connections: "Tanishka Dewan", joined: false },
+            { name: "Literary & Debate Club", code: "LD", desc: "Public speaking, Model UN, and literary symposiums.", members: 145, admins: "Ananya Iyer", connections: "Gargi Devlekar", joined: false }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentUser = JSON.parse(localStorage.getItem('cc_current_user')) || { name: "Gargi Devlekar" };
+            const navAvatar = document.getElementById('nav-user-avatar');
+            if (currentUser.avatarImg) {
+                navAvatar.innerHTML = `<img src="${currentUser.avatarImg}" alt="PFP">`;
+            } else {
+                navAvatar.textContent = currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            }
+
+            // Initialize joined communities if not present
+            if (!localStorage.getItem('cc_joined_communities')) {
+                const initialJoined = masterCommunitiesCatalog.filter(c => c.joined);
+                localStorage.setItem('cc_joined_communities', JSON.stringify(initialJoined));
+            }
+
+            loadJoinedCommunitiesSidebar();
+            loadPosts();
+        });
+
+        function loadJoinedCommunitiesSidebar() {
+            const joined = JSON.parse(localStorage.getItem('cc_joined_communities')) || [];
+            const container = document.getElementById('joined-communities-sidebar');
+            container.innerHTML = "";
+            joined.forEach(c => {
+                container.innerHTML += `
+                    <div class="community-item" onclick="openCommunityModal('${c.name}')">
+                        <div class="community-icon">${c.code || c.name.substring(0,2).toUpperCase()}</div>
+                        <span class="community-name">${c.name}</span>
+                    </div>
+                `;
+            });
+
+            // Update posting community dropdown options
+            const postCommSelect = document.getElementById('new-post-comm');
+            if (postCommSelect) {
+                postCommSelect.innerHTML = "";
+                joined.forEach(c => {
+                    postCommSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+                });
+            }
+        }
+
+        function getInitialPosts() {
+            return [
+                {
+                    id: 1, author: "Tanishka Dewan", avatarText: "TD", avatarImg: "", time: "2 hours ago", category: "technical", community: "Coding & Algorithms",
+                    content: "Just wrapped up testing our dual-tag matching queries in MySQL! Sub-second lookup speeds achieved for Python and Machine Learning tags. Excited to demo this tomorrow! 🚀",
+                    likes: 14, likedByMe: false, comments: [{ author: "Atharva", text: "That query optimization looks super clean!" }]
+                },
+                {
+                    id: 2, author: "Atharva Patil", avatarText: "AP", avatarImg: "", time: "5 hours ago", category: "creative", community: "UI/UX Design Hub",
+                    content: "Finished designing the new brand asset package and poster layouts in Figma. Let me know what you all think of the color grading! 🎨✨",
+                    likes: 22, likedByMe: false, comments: [{ author: "Gargi", text: "The gradients look amazing!" }]
+                },
+                {
+                    id: 3, author: "Rohan Sharma", avatarText: "RS", avatarImg: "", time: "Yesterday", category: "technical", community: "Machine Learning Circle",
+                    content: "Trained our sentiment analysis transformer model on 50k student reviews with 94.2% accuracy. Model weights are now live on the repo!",
+                    likes: 31, likedByMe: false, comments: [{ author: "Tanishka", text: "Incredible benchmarks!" }]
+                }
+            ];
+        }
+
+        function loadPosts() {
+            let posts = JSON.parse(localStorage.getItem('cc_posts'));
+            if (!posts) {
+                posts = getInitialPosts();
+                localStorage.setItem('cc_posts', JSON.stringify(posts));
+            }
+
+            const joined = JSON.parse(localStorage.getItem('cc_joined_communities')) || [];
+            const joinedNames = joined.map(j => j.name);
+
+            const stream = document.getElementById('posts-stream');
+            stream.innerHTML = "";
+            const filterValue = document.getElementById('feed-filter').value;
+
+            posts.forEach(post => {
+                // Rule: users can only view posts made by communities they have joined (unless posted by themselves)
+                const currentUser = JSON.parse(localStorage.getItem('cc_current_user')) || { name: "Gargi Devlekar" };
+                const isMyPost = post.author === currentUser.name;
+                const isJoinedCommunityPost = post.community && joinedNames.includes(post.community);
+
+                if (!isMyPost && !isJoinedCommunityPost) return;
+                if (filterValue !== 'all' && post.category !== filterValue) return;
+
+                const tagColor = post.category === 'technical' ? '#38bdf8' : '#ec4899';
+                const tagBg = post.category === 'technical' ? 'rgba(56, 189, 248, 0.1)' : 'rgba(236, 72, 153, 0.1)';
+                const avatarContent = post.avatarImg ? `<img src="${post.avatarImg}" alt="avatar">` : (post.avatarText || post.author.substring(0,2).toUpperCase());
+
+                let commentsHtml = "";
+                post.comments.forEach(c => {
+                    commentsHtml += `<div class="comment-item"><strong>${c.author}:</strong> ${c.text}</div>`;
+                });
+
+                stream.innerHTML += `
+                    <div class="post-card" data-id="${post.id}">
+                        <div class="post-header">
+                            <div class="post-user-info" onclick="openUserProfile('${post.author}')">
+                                <div class="post-avatar">${avatarContent}</div>
+                                <div>
+                                    <div class="post-author">${post.author}</div>
+                                    <span style="font-size: 0.75rem; color: #9ca3af;">${post.time}</span>
+                                </div>
+                            </div>
+                            <span class="post-tag" style="color: ${tagColor}; background: ${tagBg};">${post.category.charAt(0).toUpperCase() + post.category.slice(1)}</span>
+                        </div>
+                        <div class="post-body">
+                            ${post.community ? `<span class="post-community-badge" onclick="openCommunityModal('${post.community}')">📂 ${post.community}</span>` : ''}
+                            <div style="margin-top: 0.25rem;">${post.content}</div>
+                        </div>
+                        <div class="post-actions">
+                            <button class="action-btn ${post.likedByMe ? 'active' : ''}" onclick="toggleLike(${post.id})">❤️ <span class="like-count">${post.likes}</span></button>
+                            <button class="action-btn" onclick="toggleComments(this)">💬 Comments (${post.comments.length})</button>
+                            <button class="action-btn" onclick="sharePost()">🔗 Share</button>
+                        </div>
+                        <div class="comments-section">
+                            <div class="comment-list">${commentsHtml}</div>
+                            <div class="comment-input-box">
+                                <input type="text" class="comment-input" placeholder="Write a comment...">
+                                <button class="comment-submit-btn" onclick="addComment(this, ${post.id})">Post</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function createNewPost() {
+            const textarea = document.getElementById('new-post-text');
+            const categorySelect = document.getElementById('new-post-category');
+            const commSelect = document.getElementById('new-post-comm');
+            const content = textarea.value.trim();
+            if (!content) { alert("Please write something before posting."); return; }
+
+            const currentUser = JSON.parse(localStorage.getItem('cc_current_user')) || { name: "Gargi Devlekar" };
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+            let posts = JSON.parse(localStorage.getItem('cc_posts')) || getInitialPosts();
+            posts.unshift({
+                id: Date.now(),
+                author: currentUser.name,
+                avatarText: initials,
+                avatarImg: currentUser.avatarImg || "",
+                time: "Just now",
+                category: categorySelect.value,
+                community: commSelect ? commSelect.value : "Coding & Algorithms",
+                content: content,
+                likes: 0,
+                likedByMe: false,
+                comments: []
+            });
+
+            localStorage.setItem('cc_posts', JSON.stringify(posts));
+            textarea.value = "";
+            loadPosts();
+        }
+
+        function toggleLike(postId) {
+            let posts = JSON.parse(localStorage.getItem('cc_posts'));
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                if (post.likedByMe) { post.likes -= 1; post.likedByMe = false; }
+                else { post.likes += 1; post.likedByMe = true; }
+                localStorage.setItem('cc_posts', JSON.stringify(posts));
+                loadPosts();
+            }
+        }
+
+        function toggleComments(btn) {
+            btn.closest('.post-card').querySelector('.comments-section').classList.toggle('open');
+        }
+
+        function addComment(btn, postId) {
+            const input = btn.previousElementSibling;
+            const text = input.value.trim();
+            if (!text) return;
+
+            const currentUser = JSON.parse(localStorage.getItem('cc_current_user')) || { name: "Gargi Devlekar" };
+            let posts = JSON.parse(localStorage.getItem('cc_posts'));
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.comments.push({ author: currentUser.name.split(' ')[0], text: text });
+                localStorage.setItem('cc_posts', JSON.stringify(posts));
+                loadPosts();
+                event.target.closest('.post-card').querySelector('.comments-section').classList.add('open');
+            }
+        }
+
+        function sharePost() { alert("Post link copied to clipboard!"); }
+
+        function openCommunityModal(commName) {
+            currentCommunityContext = commName;
+            const data = masterCommunitiesCatalog.find(c => c.name === commName) || { code: commName.substring(0,2).toUpperCase(), members: 150, desc: "Active campus hub.", admins: "Campus Lead", connections: "None" };
+
+            document.getElementById('modal-comm-name').textContent = commName;
+            document.getElementById('modal-comm-icon').textContent = data.code;
+            document.getElementById('modal-comm-members').textContent = data.members;
+            document.getElementById('modal-comm-desc').textContent = data.desc;
+            document.getElementById('modal-comm-admins').textContent = data.admins;
+            document.getElementById('modal-comm-connections').textContent = data.connections;
+
+            let joined = JSON.parse(localStorage.getItem('cc_joined_communities')) || [];
+            const isJoined = joined.some(c => c.name === commName);
+            const btn = document.getElementById('modal-join-btn');
+            btn.textContent = isJoined ? "Leave Hub" : "Join Hub";
+            btn.style.background = isJoined ? "rgba(239, 68, 68, 0.2)" : "linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)";
+            btn.style.color = isJoined ? "#ef4444" : "#ffffff";
+
+            const posts = JSON.parse(localStorage.getItem('cc_posts')) || [];
+            const commPosts = posts.filter(p => p.community === commName);
+            const commPostsContainer = document.getElementById('modal-comm-posts');
+            commPostsContainer.innerHTML = "";
+            if (commPosts.length === 0) {
+                commPostsContainer.innerHTML = `<p style="color: #6b7280; font-size: 0.85rem;">No posts in this community yet.</p>`;
+            } else {
+                commPosts.forEach(cp => {
+                    commPostsContainer.innerHTML += `
+                        <div style="background: rgba(31,41,55,0.4); padding: 0.85rem; border-radius: 10px; margin-bottom: 0.75rem; font-size: 0.9rem;">
+                            <strong style="color: #38bdf8;">${cp.author}:</strong> ${cp.content}
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('community-modal').style.display = 'flex';
+        }
+
+        function toggleJoinFromModal() {
+            let joined = JSON.parse(localStorage.getItem('cc_joined_communities')) || [];
+            const idx = joined.findIndex(c => c.name === currentCommunityContext);
+            if (idx !== -1) {
+                joined.splice(idx, 1);
+            } else {
+                const data = masterCommunitiesCatalog.find(c => c.name === currentCommunityContext) || { name: currentCommunityContext, code: "CC" };
+                joined.push(data);
+            }
+            localStorage.setItem('cc_joined_communities', JSON.stringify(joined));
+            loadJoinedCommunitiesSidebar();
+            openCommunityModal(currentCommunityContext);
+            loadPosts();
+        }
+
+        const mockProfilesDB = {
+            "Tanishka Dewan": { username: "tanishka", expertise: "Python, MySQL, Data Structures", interests: "Machine Learning, Cloud" },
+            "Atharva Patil": { username: "atharva", expertise: "UI Design, Figma, Tailwind CSS", interests: "Graphic Design, Branding" },
+            "Rohan Sharma": { username: "rohan", expertise: "C++, Mechanical CAD, Linux", interests: "Robotics, Embedded Systems" },
+            "Gargi Devlekar": { username: "gargi", expertise: "Python, Web Dev, Next.js", interests: "Machine Learning, Public Speaking" }
+        };
+
+        function openUserProfile(authorName) {
+            let users = JSON.parse(localStorage.getItem('cc_users')) || [];
+            let found = users.find(u => u.name === authorName) || mockProfilesDB[authorName] || { username: authorName.toLowerCase().replace(/\s/g,''), name: authorName, expertise: "General Tech", interests: "Peer Learning" };
+
+            document.getElementById('popup-name').textContent = authorName;
+            document.getElementById('popup-username').textContent = "@" + (found.username || authorName.toLowerCase());
+            document.getElementById('popup-avatar').textContent = authorName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+            document.getElementById('popup-expertise').textContent = found.expertise || "Not specified";
+            document.getElementById('popup-interests').textContent = found.interests || "Not specified";
+            document.getElementById('popup-connect-btn').href = `ecosystem.html?tab=messages&chat=${encodeURIComponent(authorName)}`;
+
+            document.getElementById('profile-popup-modal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+</body>
+</html>
